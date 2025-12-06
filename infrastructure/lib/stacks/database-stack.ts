@@ -35,7 +35,7 @@ export class DatabaseStack extends cdk.Stack {
     // Aurora Serverless v2 Cluster
     this.cluster = new rds.DatabaseCluster(this, 'TennisProCluster', {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_15_4,
+        version: rds.AuroraPostgresEngineVersion.VER_16_6,
       }),
       serverlessV2MinCapacity: 0.5,
       serverlessV2MaxCapacity: props.environment === 'prod' ? 16 : 4,
