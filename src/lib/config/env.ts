@@ -16,10 +16,14 @@ const envSchema = z.object({
   DATABASE_URL: z.string().optional(),
 
   // S3
-  S3_BUCKET_VIDEOS: z.string().optional(),
-  S3_BUCKET_ASSETS: z.string().optional(),
+  S3_VIDEOS_BUCKET: z.string().optional(),
+  S3_ASSETS_BUCKET: z.string().optional(),
+  S3_EXPORTS_BUCKET: z.string().optional(),
+
+  // CloudFront
   CLOUDFRONT_DOMAIN: z.string().optional(),
   CLOUDFRONT_KEY_PAIR_ID: z.string().optional(),
+  CLOUDFRONT_PRIVATE_KEY: z.string().optional(),
 
   // Sanity
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().optional(),
@@ -51,6 +55,40 @@ export function validateEnv(): Env {
 
   return parsed.data;
 }
+
+// Lazily validated environment (call validateEnv() for strict validation)
+export const env = {
+  get NODE_ENV() {
+    return (process.env.NODE_ENV as 'development' | 'production' | 'test') ?? 'development';
+  },
+  get AWS_REGION() {
+    return process.env.AWS_REGION ?? 'us-east-1';
+  },
+  get AWS_ACCOUNT_ID() {
+    return process.env.AWS_ACCOUNT_ID;
+  },
+  get S3_VIDEOS_BUCKET() {
+    return process.env.S3_VIDEOS_BUCKET ?? '';
+  },
+  get S3_ASSETS_BUCKET() {
+    return process.env.S3_ASSETS_BUCKET ?? '';
+  },
+  get S3_EXPORTS_BUCKET() {
+    return process.env.S3_EXPORTS_BUCKET ?? '';
+  },
+  get CLOUDFRONT_DOMAIN() {
+    return process.env.CLOUDFRONT_DOMAIN;
+  },
+  get CLOUDFRONT_KEY_PAIR_ID() {
+    return process.env.CLOUDFRONT_KEY_PAIR_ID;
+  },
+  get CLOUDFRONT_PRIVATE_KEY() {
+    return process.env.CLOUDFRONT_PRIVATE_KEY;
+  },
+  get DATABASE_URL() {
+    return process.env.DATABASE_URL;
+  },
+};
 
 // For client-side (only NEXT_PUBLIC_ vars)
 export function getPublicEnv() {
