@@ -6,6 +6,7 @@ import {
   Video,
   Calendar,
   TrendingUp,
+  BarChart3,
   Bell,
   Settings,
   HelpCircle,
@@ -62,6 +63,11 @@ const mainNavItems = [
     title: 'Progress',
     href: '/dashboard/progress',
     icon: TrendingUp,
+  },
+  {
+    title: 'Analytics',
+    href: '/dashboard/analytics',
+    icon: BarChart3,
   },
 ];
 
