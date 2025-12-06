@@ -8,7 +8,7 @@ TennisProPlus is a professional tennis coaching platform combining business mana
 
 ## Tech Stack
 
-**Frontend:** Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Konva.js
+**Frontend:** Next.js 16 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Konva.js
 **Backend:** AWS API Gateway, Lambda (Node.js 20.x), Aurora PostgreSQL Serverless v2, Step Functions
 **Auth:** AWS Cognito User Pools + OAuth (Google, Apple)
 **Storage:** AWS S3 + CloudFront CDN + signed URLs
@@ -18,6 +18,14 @@ TennisProPlus is a professional tennis coaching platform combining business mana
 **Infrastructure:** AWS CDK (TypeScript)
 **State Management:** TanStack Query (server state), Zustand (client state)
 
+## Development Requirements
+
+- **Node.js**: 20.x+ (24.x recommended for development) - Lambda runtime uses Node.js 20.x
+- **pnpm**: 10.x (package manager)
+- **AWS CLI**: 2.x configured with appropriate credentials
+- **Git**: 2.x for version control
+- **AWS CDK CLI**: 2.x (`npm install -g aws-cdk`)
+
 ## Architecture
 
 **AWS-Native Serverless Architecture** (decision: TPv1-ADR-001)
@@ -25,7 +33,7 @@ TennisProPlus is a professional tennis coaching platform combining business mana
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      VERCEL (Frontend)                      │
-│  Next.js 14 + shadcn/ui + PWA                              │
+│  Next.js 16 + shadcn/ui + PWA                              │
 └─────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────┐
@@ -55,23 +63,46 @@ TennisProPlus is a professional tennis coaching platform combining business mana
 - **Step Functions**: Video processing workflows, data sync orchestration
 - **EventBridge**: Scheduled tasks (analytics, reports), S3 event routing
 
-## Development Commands
+## Project Structure
 
-**Project Setup (Monorepo with pnpm):**
-```bash
-pnpm install         # Install all dependencies
-pnpm dev            # Start all development servers
-pnpm build          # Build all packages
-pnpm lint           # Run ESLint across workspace
-pnpm typecheck      # TypeScript checking across workspace
-pnpm test           # Run all tests
+> **Note:** Starting with a simple single-repo structure. Can migrate to Turborepo monorepo later if build performance becomes an issue.
+
+```
+tennispro/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   ├── components/             # React components
+│   │   ├── ui/                 # shadcn/ui components
+│   │   ├── forms/              # Form components
+│   │   └── layout/             # Layout components
+│   ├── lib/                    # Utilities, hooks, API clients
+│   │   ├── api/                # API client functions
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── utils/              # Utility functions
+│   │   └── validators/         # Zod schemas
+│   └── types/                  # TypeScript type definitions
+├── sanity/                     # Sanity Studio (embedded)
+│   ├── schemas/                # Content schemas
+│   └── lib/                    # Sanity client utilities
+├── infrastructure/             # AWS CDK (separate package.json)
+│   ├── bin/                    # CDK app entry
+│   ├── lib/stacks/             # CDK stacks
+│   └── lambda/                 # Lambda function code
+├── prisma/                     # Database schema & migrations
+├── public/                     # Static assets
+└── package.json                # Single package.json
 ```
 
-**Frontend (Next.js):**
+## Development Commands
+
+**Project Setup:**
 ```bash
-pnpm dev:web        # Start Next.js development server
-pnpm build:web      # Build Next.js for production
-pnpm start:web      # Start production build locally
+pnpm install         # Install all dependencies
+pnpm dev            # Start Next.js development server
+pnpm build          # Build for production
+pnpm lint           # Run ESLint
+pnpm typecheck      # TypeScript checking
+pnpm test           # Run all tests
 ```
 
 **Sanity Studio:**
@@ -83,28 +114,25 @@ pnpm deploy:studio  # Deploy Studio to Sanity hosting
 
 **AWS Infrastructure (CDK):**
 ```bash
-pnpm cdk:diff       # Compare deployed stack with current state
-pnpm cdk:deploy     # Deploy to development environment
-pnpm cdk:deploy:prod # Deploy to production environment
-pnpm cdk:destroy    # Destroy development stack
-pnpm cdk:synth      # Synthesize CloudFormation templates
+cd infrastructure
+pnpm cdk diff       # Compare deployed stack with current state
+pnpm cdk deploy     # Deploy to development environment
+pnpm cdk synth      # Synthesize CloudFormation templates
 ```
 
 **Database Operations:**
 ```bash
-pnpm db:generate    # Generate Prisma client
-pnpm db:push        # Push schema changes to database
-pnpm db:migrate     # Run database migrations
-pnpm db:seed        # Seed database with initial data
-pnpm db:reset       # Reset database and apply migrations
-pnpm db:studio      # Open Prisma Studio
+npx prisma generate  # Generate Prisma client
+npx prisma db push   # Push schema changes to database
+npx prisma migrate dev # Run database migrations
+npx prisma db seed   # Seed database with initial data
+npx prisma studio    # Open Prisma Studio
 ```
 
 **Video Processing (Modal.com):**
 ```bash
-pnpm modal:deploy   # Deploy video analysis functions
-pnpm modal:logs     # View Modal function logs
-pnpm modal:shell    # Interactive Modal shell
+modal deploy         # Deploy video analysis functions
+modal logs           # View Modal function logs
 ```
 
 ## Key Workflows

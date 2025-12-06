@@ -1,0 +1,151 @@
+{
+  "common": {
+    "appName": "TennisProPlus",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "signup": "S'inscrire",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "name": "Nom",
+    "rememberMe": "Se souvenir de moi",
+    "noAccount": "Pas de compte ?",
+    "hasAccount": "Déjà un compte ?",
+    "signupSuccess": "Compte créé avec succès !",
+    "loginSuccess": "Bon retour !",
+    "logoutSuccess": "Vous avez été déconnecté",
+    "passwordResetSent": "E-mail de réinitialisation envoyé",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithApple": "Continuer avec Apple",
+    "orContinueWith": "Ou continuer avec"
+  },
+  "nav": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "blog": "Blog",
+    "about": "À propos",
+    "contact": "Contact",
+    "dashboard": "Tableau de bord",
+    "students": "Étudiants",
+    "videos": "Vidéos",
+    "lessons": "Leçons",
+    "analytics": "Analyses",
+    "settings": "Paramètres"
+  },
+  "home": {
+    "hero": {
+      "title": "Élevez Votre Coaching Tennis",
+      "subtitle": "Analyse vidéo alimentée par l'IA et gestion complète des étudiants pour les entraîneurs de tennis professionnels",
+      "cta": "Commencer Gratuitement",
+      "secondaryCta": "Voir la Démo"
+    },
+    "features": {
+      "title": "Tout Ce Dont Vous Avez Besoin",
+      "videoAnalysis": {
+        "title": "Analyse Vidéo IA",
+        "description": "Estimation de pose avancée et analyse de coup alimentée par l'apprentissage automatique"
+      },
+      "studentManagement": {
+        "title": "Gestion des Étudiants",
+        "description": "Suivez les progrès, gérez les leçons et communiquez avec les étudiants en un seul endroit"
+      },
+      "progressTracking": {
+        "title": "Suivi des Progrès",
+        "description": "Visualisez l'amélioration au fil du temps avec des analyses détaillées et des rapports"
+      }
+    },
+    "testimonials": {
+      "title": "Approuvé par des Entraîneurs du Monde Entier"
+    },
+    "cta": {
+      "title": "Prêt à Transformer Votre Coaching ?",
+      "subtitle": "Rejoignez des milliers d'entraîneurs utilisant TennisProPlus",
+      "button": "Commencer l'Essai Gratuit"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bon retour, {name}",
+    "overview": "Aperçu",
+    "recentActivity": "Activité Récente",
+    "upcomingLessons": "Leçons à Venir",
+    "studentProgress": "Progrès des Étudiants",
+    "quickActions": "Actions Rapides",
+    "uploadVideo": "Télécharger Vidéo",
+    "addStudent": "Ajouter Étudiant",
+    "scheduleLesson": "Planifier Leçon"
+  },
+  "students": {
+    "title": "Étudiants",
+    "addStudent": "Ajouter Étudiant",
+    "noStudents": "Pas encore d'étudiants",
+    "addFirstStudent": "Ajoutez votre premier étudiant pour commencer",
+    "searchPlaceholder": "Rechercher des étudiants...",
+    "activeStudents": "Étudiants Actifs",
+    "totalLessons": "Total des Leçons",
+    "avgProgress": "Progrès Moyen"
+  },
+  "videos": {
+    "title": "Bibliothèque Vidéo",
+    "upload": "Télécharger Vidéo",
+    "noVideos": "Pas encore de vidéos",
+    "uploadFirst": "Téléchargez votre première vidéo pour analyse",
+    "processing": "Traitement...",
+    "analyzed": "Analysé",
+    "pending": "En attente"
+  },
+  "pricing": {
+    "title": "Tarification Simple et Transparente",
+    "subtitle": "Choisissez le plan adapté à votre pratique d'entraînement",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "savePercent": "Économisez {percent}%",
+    "perMonth": "/mois",
+    "perYear": "/an",
+    "getStarted": "Commencer",
+    "currentPlan": "Plan Actuel",
+    "mostPopular": "Le Plus Populaire",
+    "features": "Fonctionnalités",
+    "included": "Inclus"
+  },
+  "footer": {
+    "tagline": "Plateforme professionnelle de coaching tennis avec analyse vidéo alimentée par l'IA",
+    "product": "Produit",
+    "resources": "Ressources",
+    "company": "Entreprise",
+    "legal": "Légal",
+    "copyright": "© {year} TennisProPlus. Tous droits réservés."
+  },
+  "errors": {
+    "notFound": "Page non trouvée",
+    "notFoundDescription": "La page que vous cherchez n'existe pas",
+    "serverError": "Erreur serveur",
+    "serverErrorDescription": "Quelque chose s'est mal passé de notre côté",
+    "unauthorized": "Non autorisé",
+    "unauthorizedDescription": "Vous n'avez pas la permission d'accéder à cette page",
+    "goHome": "Aller à l'accueil"
+  }
+}

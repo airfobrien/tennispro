@@ -36,7 +36,7 @@ TPv1_Tasks.md (this document) 📋 IMPLEMENTATION GUIDE
 
 | Layer | Technology | Version |
 |-------|------------|---------|
-| Frontend | Next.js (App Router) | 14.x |
+| Frontend | Next.js (App Router) | 16.x |
 | UI Components | shadcn/ui | Latest |
 | Styling | Tailwind CSS | 3.x |
 | Content CMS | Sanity.io | 3.x |
@@ -47,31 +47,29 @@ TPv1_Tasks.md (this document) 📋 IMPLEMENTATION GUIDE
 | Orchestration | AWS Step Functions | - |
 | Infrastructure | AWS CDK | 2.x |
 | Language | TypeScript | 5.x |
-| Package Manager | pnpm | 8.x |
+| Package Manager | pnpm | 10.x |
 
 ### Project Structure
 
+> **Note:** Starting with a simple single-repo structure. Can migrate to Turborepo monorepo later if build performance becomes an issue with multiple packages.
+
 ```
 tennispro/
-├── apps/
-│   ├── web/                    # Next.js application (Vercel)
-│   │   ├── app/                # App Router pages
-│   │   ├── components/         # React components
-│   │   ├── lib/                # Utilities, hooks, API clients
-│   │   └── ...
-│   └── studio/                 # Sanity Studio
-│       ├── schemas/            # Content schemas
-│       └── ...
-├── packages/
-│   ├── shared/                 # Shared types, utilities
-│   │   ├── types/              # TypeScript types
-│   │   ├── utils/              # Shared utilities
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   ├── components/             # React components
+│   │   ├── ui/                 # shadcn/ui components
+│   │   ├── forms/              # Form components
+│   │   └── layout/             # Layout components
+│   ├── lib/                    # Utilities, hooks, API clients
+│   │   ├── api/                # API client functions
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── utils/              # Utility functions
 │   │   └── validators/         # Zod schemas
-│   ├── db/                     # Database schema, migrations
-│   │   ├── schema/             # Prisma or Drizzle schema
-│   │   ├── migrations/         # SQL migrations
-│   │   └── seed/               # Seed data
-│   └── ui/                     # Shared UI components (if needed)
+│   └── types/                  # TypeScript type definitions
+├── sanity/                     # Sanity Studio (embedded)
+│   ├── schemas/                # Content schemas
+│   └── lib/                    # Sanity client utilities
 ├── infrastructure/             # AWS CDK
 │   ├── bin/                    # CDK app entry
 │   ├── lib/
@@ -81,11 +79,14 @@ tennispro/
 │       ├── api/                # API handlers
 │       ├── triggers/           # Event triggers
 │       └── shared/             # Shared Lambda utilities
+├── prisma/                     # Database schema & migrations
+│   ├── schema.prisma           # Prisma schema
+│   ├── migrations/             # SQL migrations
+│   └── seed.ts                 # Seed data
+├── public/                     # Static assets
 ├── docs/                       # Documentation
 ├── scripts/                    # Build/deploy scripts
-├── turbo.json                  # Turborepo config
-├── pnpm-workspace.yaml         # pnpm workspace
-└── package.json                # Root package.json
+└── package.json                # Single package.json
 ```
 
 ---
@@ -94,7 +95,7 @@ tennispro/
 
 | ID | Group | Description | Dependencies | Est. Effort |
 |----|-------|-------------|--------------|-------------|
-| TG-01 | Project Foundation | Monorepo, tooling, shared packages | None | 4-6 hours |
+| TG-01 | Project Foundation | Single repo setup, tooling, base configuration | None | 3-4 hours |
 | TG-02 | AWS Infrastructure | CDK stacks, base resources | TG-01 | 8-12 hours |
 | TG-03 | Database Schema | Aurora PostgreSQL, Prisma/Drizzle | TG-02 | 6-8 hours |
 | TG-04 | Authentication | Cognito setup, JWT handling | TG-02 | 6-8 hours |
@@ -121,114 +122,119 @@ tennispro/
 # TG-01: Project Foundation
 
 ## Objective
-Set up monorepo with Turborepo, configure tooling, create shared packages.
+Set up a single-repo Next.js project with TypeScript, configure tooling, and establish the base project structure.
+
+> **Future consideration:** If the project grows to need independent versioning of packages or build caching becomes slow, consider migrating to Turborepo monorepo structure. For now, a single repo with folder organization provides simplicity.
 
 ## Prerequisites
-- Node.js 20.x installed
-- pnpm 8.x installed
+- Node.js 20.x+ installed (24.x recommended for development)
+- pnpm 10.x installed
 - AWS CLI configured
 - Git repository initialized
 
 ## Tasks
 
-### TG-01-001: Initialize Monorepo
+### TG-01-001: Initialize Next.js Project
 
-**Description:** Create Turborepo monorepo with pnpm workspaces.
+**Description:** Create Next.js application with App Router and TypeScript.
 
 **Commands:**
 ```bash
-pnpm dlx create-turbo@latest tennispro --package-manager pnpm
-cd tennispro
+pnpm create next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
 ```
 
-**Files to create/modify:**
+**This will create:**
+- `src/app/` - App Router pages
+- `src/` directory structure
+- `tailwind.config.ts` - Tailwind configuration
+- `tsconfig.json` - TypeScript configuration
+- `next.config.ts` - Next.js configuration
+- `package.json` - Dependencies and scripts
 
-`pnpm-workspace.yaml`:
-```yaml
-packages:
-  - "apps/*"
-  - "packages/*"
-  - "infrastructure"
-```
-
-`turbo.json`:
-```json
-{
-  "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "cdk.out/**"]
-    },
-    "lint": {},
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "test": {
-      "dependsOn": ["build"]
-    },
-    "deploy": {
-      "dependsOn": ["build", "test"]
-    }
-  }
-}
-```
+**Post-setup manual additions:**
+- Create `src/types/` directory for shared TypeScript types
+- Create `src/lib/` directory for utilities
+- Create `infrastructure/` directory for AWS CDK (added in TG-02)
 
 **Acceptance Criteria:**
 - [ ] `pnpm install` runs without errors
-- [ ] `pnpm build` runs (even if apps are empty)
-- [ ] Workspace packages resolve correctly
+- [ ] `pnpm dev` starts the development server
+- [ ] `pnpm build` completes successfully
+- [ ] TypeScript compilation has no errors
 
 ---
 
 ### TG-01-002: Configure TypeScript
 
-**Description:** Set up TypeScript with strict mode, path aliases, shared config.
+**Description:** Enhance the Next.js-generated TypeScript config with stricter settings.
 
-**Files to create:**
-
-`tsconfig.base.json` (root):
+**Modify `tsconfig.json`** (already created by Next.js, enhance with these settings):
 ```json
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
+    "lib": ["dom", "dom.iterable", "ES2022"],
     "allowJs": true,
+    "skipLibCheck": true,
     "strict": true,
-    "noUncheckedIndexedAccess": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "isolatedModules": true,
-    "declaration": true,
-    "declarationMap": true,
-    "incremental": true
+    "jsx": "preserve",
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "infrastructure"]
+}
+```
+
+**Create `infrastructure/tsconfig.json`** (for CDK, separate from Next.js):
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "strict": true,
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": ".",
+    "declaration": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true
+  },
+  "include": ["bin/**/*", "lib/**/*", "lambda/**/*"],
+  "exclude": ["node_modules", "cdk.out"]
 }
 ```
 
 **Acceptance Criteria:**
-- [ ] All packages extend base config
-- [ ] Path aliases work across packages
+- [ ] Path aliases (`@/*`) resolve correctly
 - [ ] No TypeScript errors in empty project
+- [ ] Infrastructure and Next.js have separate configs
 
 ---
 
 ### TG-01-003: Configure ESLint and Prettier
 
-**Description:** Set up consistent code formatting and linting.
+**Description:** Enhance the Next.js-generated ESLint config and add Prettier.
 
-**Dependencies to install (root):**
+**Dependencies to install:**
 ```bash
-pnpm add -Dw eslint prettier eslint-config-prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-plugin-import
+pnpm add -D prettier eslint-config-prettier eslint-plugin-import
 ```
+
+> Note: Next.js already includes ESLint, @typescript-eslint, and basic configuration.
 
 **Files to create:**
 
@@ -279,33 +285,15 @@ module.exports = {
 
 ---
 
-### TG-01-004: Create Shared Types Package
+### TG-01-004: Create Shared Types
 
-**Description:** Create `@tennispro/shared` package for shared TypeScript types.
+**Description:** Create shared TypeScript types in `src/types/` directory.
 
-**Directory:** `packages/shared/`
+**Directory:** `src/types/`
 
 **Files to create:**
 
-`packages/shared/package.json`:
-```json
-{
-  "name": "@tennispro/shared",
-  "version": "0.0.1",
-  "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
-  },
-  "devDependencies": {
-    "typescript": "^5.3.0"
-  }
-}
-```
-
-`packages/shared/src/types/index.ts`:
+`src/types/index.ts`:
 ```typescript
 // Coach types
 export interface Coach {
@@ -597,31 +585,25 @@ export interface PaginationParams {
 }
 ```
 
-`packages/shared/src/index.ts`:
-```typescript
-export * from './types';
-```
-
 **Acceptance Criteria:**
-- [ ] Package builds without errors
-- [ ] Types can be imported in other packages
+- [ ] Types compile without errors
+- [ ] Types can be imported via `@/types` path alias
 - [ ] All core entities have type definitions
 
 ---
 
-### TG-01-005: Create Validators Package
+### TG-01-005: Create Validators
 
 **Description:** Create Zod schemas for runtime validation.
 
 **Dependencies:**
 ```bash
-cd packages/shared
 pnpm add zod
 ```
 
 **Files to create:**
 
-`packages/shared/src/validators/index.ts`:
+`src/lib/validators/index.ts`:
 ```typescript
 import { z } from 'zod';
 
@@ -771,7 +753,7 @@ export type PaginationInput = z.infer<typeof paginationSchema>;
 
 **Files to create:**
 
-`packages/shared/src/config/env.ts`:
+`src/lib/config/env.ts`:
 ```typescript
 import { z } from 'zod';
 
@@ -901,7 +883,7 @@ Set up AWS CDK project with all required stacks for TennisPro.
 
 ### TG-02-001: Initialize CDK Project
 
-**Description:** Create AWS CDK TypeScript project within monorepo.
+**Description:** Create AWS CDK TypeScript project in the infrastructure directory.
 
 **Directory:** `infrastructure/`
 
@@ -917,7 +899,7 @@ cdk init app --language typescript
 `infrastructure/package.json`:
 ```json
 {
-  "name": "@tennispro/infrastructure",
+  "name": "tennispro-infrastructure",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -2034,26 +2016,22 @@ Define and deploy PostgreSQL schema using Prisma or Drizzle ORM.
 
 ## Tasks
 
-### TG-03-001: Set Up Database Package
+### TG-03-001: Set Up Prisma
 
-**Description:** Create database package with Prisma ORM.
+**Description:** Initialize Prisma ORM in the project root.
 
-**Directory:** `packages/db/`
+**Directory:** `prisma/` (in project root)
 
 **Commands:**
 ```bash
-mkdir -p packages/db
-cd packages/db
-pnpm init
 pnpm add prisma @prisma/client
-pnpm add -D typescript @types/node
 npx prisma init
 ```
 
 **Acceptance Criteria:**
-- [ ] Prisma initialized
-- [ ] Database URL configured
-- [ ] Package builds successfully
+- [ ] Prisma initialized in `prisma/` directory
+- [ ] Database URL configured in `.env`
+- [ ] Prisma client generates successfully
 
 ---
 
@@ -2061,7 +2039,7 @@ npx prisma init
 
 **Description:** Create complete database schema.
 
-**File:** `packages/db/prisma/schema.prisma`
+**File:** `prisma/schema.prisma`
 
 ```prisma
 generator client {
@@ -2478,7 +2456,6 @@ model LessonVideo {
 
 **Commands:**
 ```bash
-cd packages/db
 npx prisma migrate dev --name init
 npx prisma generate
 ```
@@ -2494,7 +2471,7 @@ npx prisma generate
 
 **Description:** Create seed script for development data.
 
-**File:** `packages/db/prisma/seed.ts`
+**File:** `prisma/seed.ts`
 
 ```typescript
 import { PrismaClient, PlayerCategory, SkillCategory } from '@prisma/client';
