@@ -1,0 +1,8 @@
+node_modules
+.next
+out
+build
+dist
+cdk.out
+.vercel
+pnpm-lock.yaml

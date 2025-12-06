@@ -5,9 +5,14 @@ node_modules/
 # Build outputs
 dist/
 .next/
+/out/
 cdk.out/
 *.tsbuildinfo
 .turbo/
+next-env.d.ts
+
+# Vercel
+.vercel
 
 # Environment
 .env
