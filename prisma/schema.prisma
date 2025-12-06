@@ -1,0 +1,397 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// COACH & AUTHENTICATION
+// ============================================
+
+model Coach {
+  id               String           @id @default(uuid())
+  cognitoUserId    String           @unique @map("cognito_user_id")
+  email            String           @unique
+  name             String
+  slug             String           @unique
+  tier             SubscriptionTier @default(starter)
+  stripeCustomerId String?          @map("stripe_customer_id")
+
+  // Limits based on tier
+  studentLimit  Int    @default(15) @map("student_limit")
+  storageLimit  BigInt @default(10737418240) @map("storage_limit") // 10GB in bytes
+  analysisLimit Int    @default(20) @map("analysis_limit") // per month
+
+  // Tracking
+  analysisCount Int    @default(0) @map("analysis_count") // reset monthly
+  storageUsed   BigInt @default(0) @map("storage_used")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  students         Student[]
+  progressionPaths ProgressionPath[]
+  videos           Video[]
+  analyses         Analysis[]
+  lessons          Lesson[]
+
+  @@map("coaches")
+}
+
+enum SubscriptionTier {
+  starter
+  professional
+  enterprise
+}
+
+// ============================================
+// STUDENTS
+// ============================================
+
+model Student {
+  id      String @id @default(uuid())
+  coachId String @map("coach_id")
+  coach   Coach  @relation(fields: [coachId], references: [id], onDelete: Cascade)
+
+  name     String
+  email    String?
+  phone    String?
+  photoUrl String? @map("photo_url")
+
+  playerCategory PlayerCategory @map("player_category")
+  status         StudentStatus  @default(active)
+
+  // Current progression
+  currentPathId  String?          @map("current_path_id")
+  currentPath    ProgressionPath? @relation("CurrentPath", fields: [currentPathId], references: [id])
+  currentLevelId String?          @map("current_level_id")
+  currentLevel   Level?           @relation("CurrentLevel", fields: [currentLevelId], references: [id])
+
+  notes String?
+
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  archivedAt DateTime? @map("archived_at")
+
+  // Relations
+  progress StudentProgress[]
+  videos   Video[]
+  analyses Analysis[]
+  lessons  Lesson[]
+
+  @@index([coachId])
+  @@index([coachId, status])
+  @@map("students")
+}
+
+enum PlayerCategory {
+  recreational
+  competitive_junior
+  collegiate_track
+  professional_track
+  senior
+}
+
+enum StudentStatus {
+  active
+  inactive
+  archived
+}
+
+// ============================================
+// PROGRESSION FRAMEWORK
+// ============================================
+
+model ProgressionPath {
+  id      String @id @default(uuid())
+  coachId String @map("coach_id")
+  coach   Coach  @relation(fields: [coachId], references: [id], onDelete: Cascade)
+
+  name           String
+  description    String?
+  playerCategory PlayerCategory @map("player_category")
+
+  isTemplate     Boolean         @default(false) @map("is_template")
+  templateSource TemplateSource? @map("template_source")
+  isSystem       Boolean         @default(false) @map("is_system") // Platform-provided templates
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  levels   Level[]
+  students Student[] @relation("CurrentPath")
+
+  @@index([coachId])
+  @@index([isSystem, playerCategory])
+  @@map("progression_paths")
+}
+
+enum TemplateSource {
+  uspta
+  ptr
+  custom
+}
+
+model Level {
+  id     String          @id @default(uuid())
+  pathId String          @map("path_id")
+  path   ProgressionPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  order       Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  skills   Skill[]
+  students Student[] @relation("CurrentLevel")
+
+  @@unique([pathId, order])
+  @@index([pathId])
+  @@map("levels")
+}
+
+model Skill {
+  id      String @id @default(uuid())
+  levelId String @map("level_id")
+  level   Level  @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  category    SkillCategory
+  order       Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  milestones Milestone[]
+
+  @@unique([levelId, order])
+  @@index([levelId])
+  @@map("skills")
+}
+
+enum SkillCategory {
+  serve
+  forehand
+  backhand
+  volley
+  overhead
+  movement
+  strategy
+  mental
+}
+
+model Milestone {
+  id      String @id @default(uuid())
+  skillId String @map("skill_id")
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  order       Int
+
+  // Target metrics for AI validation
+  targetMetrics Json? @map("target_metrics") // Array of TargetMetric
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  progress StudentProgress[]
+
+  @@unique([skillId, order])
+  @@index([skillId])
+  @@map("milestones")
+}
+
+model StudentProgress {
+  id          String    @id @default(uuid())
+  studentId   String    @map("student_id")
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  milestoneId String    @map("milestone_id")
+  milestone   Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+
+  status     ProgressStatus @default(not_started)
+  achievedAt DateTime?      @map("achieved_at")
+
+  validationMethod  ValidationMethod? @map("validation_method")
+  validationVideoId String?           @map("validation_video_id")
+  validationVideo   Video?            @relation("ValidationVideo", fields: [validationVideoId], references: [id])
+
+  notes String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([studentId, milestoneId])
+  @@index([studentId])
+  @@index([milestoneId])
+  @@map("student_progress")
+}
+
+enum ProgressStatus {
+  not_started
+  in_progress
+  achieved
+}
+
+enum ValidationMethod {
+  coach_assessment
+  ai_validation
+  match_result
+}
+
+// ============================================
+// VIDEO & ANALYSIS
+// ============================================
+
+model Video {
+  id        String  @id @default(uuid())
+  coachId   String  @map("coach_id")
+  coach     Coach   @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  studentId String  @map("student_id")
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  title    String?
+  s3Key    String  @map("s3_key")
+  s3Bucket String  @map("s3_bucket")
+
+  // Metadata
+  filename    String
+  contentType String @map("content_type")
+  fileSize    BigInt @map("file_size")
+  duration    Float? // seconds
+  width       Int?
+  height      Int?
+
+  strokeType StrokeType? @map("stroke_type")
+  recordedAt DateTime?   @map("recorded_at")
+
+  status VideoStatus @default(uploading)
+
+  // Thumbnails
+  thumbnailUrl String? @map("thumbnail_url")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  analyses    Analysis[]
+  validations StudentProgress[] @relation("ValidationVideo")
+  lessons     LessonVideo[]
+
+  @@index([coachId])
+  @@index([studentId])
+  @@index([coachId, studentId])
+  @@map("videos")
+}
+
+enum StrokeType {
+  serve
+  forehand
+  backhand_1h
+  backhand_2h
+  volley
+  overhead
+  movement
+  rally
+  match
+}
+
+enum VideoStatus {
+  uploading
+  uploaded
+  processing
+  analyzed
+  failed
+}
+
+model Analysis {
+  id        String  @id @default(uuid())
+  videoId   String  @map("video_id")
+  video     Video   @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  coachId   String  @map("coach_id")
+  coach     Coach   @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  studentId String  @map("student_id")
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  strokeType StrokeType     @map("stroke_type")
+  status     AnalysisStatus @default(pending)
+
+  // Results
+  metrics         Json?    // Record<string, AnalysisMetric>
+  skeletonDataUrl String?  @map("skeleton_data_url") // S3 URL to large skeleton data
+  insights        String[] // AI-generated coaching insights
+
+  // Error handling
+  errorMessage String? @map("error_message")
+  retryCount   Int     @default(0) @map("retry_count")
+
+  processedAt DateTime? @map("processed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([videoId])
+  @@index([coachId])
+  @@index([studentId])
+  @@map("analyses")
+}
+
+enum AnalysisStatus {
+  pending
+  processing
+  complete
+  failed
+}
+
+// ============================================
+// LESSONS
+// ============================================
+
+model Lesson {
+  id        String  @id @default(uuid())
+  coachId   String  @map("coach_id")
+  coach     Coach   @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  studentId String  @map("student_id")
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  date     DateTime
+  duration Int // minutes
+  type     LessonType
+  location String?
+
+  notes        String?
+  skillsWorked String[] @map("skills_worked")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  videos LessonVideo[]
+
+  @@index([coachId])
+  @@index([studentId])
+  @@index([coachId, date])
+  @@map("lessons")
+}
+
+enum LessonType {
+  private
+  semi_private
+  group
+  clinic
+}
+
+model LessonVideo {
+  lessonId String @map("lesson_id")
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  videoId  String @map("video_id")
+  video    Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@id([lessonId, videoId])
+  @@map("lesson_videos")
+}
