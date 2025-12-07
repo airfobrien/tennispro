@@ -242,25 +242,22 @@ All planning documents are complete. Ready to begin 14-week implementation with 
 
 **See: `docs/GIT_WORKFLOW.md` for full documentation**
 
-### Branch Strategy
-- `master` - Production-ready code
-- `staging` - Pre-production testing (MUST stay in sync with master after releases)
-- `feature/*` - Development branches (branch from staging)
-
-### Rules for Claude Code
-1. **Before switching branches**: Check if master and staging are in sync
-2. **After merging any PR to master**: Always sync staging immediately
-3. **Feature PRs**: Target staging first, then promote staging → master
-4. **Never let staging fall behind master**
-
-### Quick Sync Commands
-```bash
-# Check sync status
-git log origin/master --oneline -1 && git log origin/staging --oneline -1
-
-# Sync staging with master
-git checkout staging && git merge origin/master && git push origin staging
+### Branch Flow
 ```
+feature/* → staging → master (production)
+```
+
+### Rules
+1. **Feature branches**: Always branch FROM staging, merge TO staging
+2. **Staging**: Testing environment - all features land here first
+3. **Master**: Production - only receives merges FROM staging when tested
+4. **Never merge directly to master** - always go through staging
+
+### Claude Code Checklist
+- [ ] New feature? Branch from staging: `git checkout staging && git pull && git checkout -b feature/TG-XX-name`
+- [ ] Feature done? PR targets staging (not master)
+- [ ] Ready for production? Merge staging → master
+- [ ] After production release? staging and master should match
 
 ## Important Files
 

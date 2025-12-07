@@ -3,99 +3,104 @@
 ## Branch Strategy
 
 ```
-main/master ─────────────────────────────────────────────►  (production-ready)
+master (production) ◄─────────────────────────── merge when tested
+                                                       ↑
+staging (testing) ◄──────────────────────────── merge features here
+       ↑                                               ↑
+       └─────── feature/* (development) ───────────────┘
                     ↑
-staging ────────────┴────────────────────────────────────►  (pre-production)
-                    ↑
-feature/* ──────────┘                                       (development)
+                pull from staging
 ```
 
 ## Branches
 
 | Branch | Purpose | Deploys To |
 |--------|---------|------------|
-| `master` | Production-ready code | Production |
-| `staging` | Pre-production testing | Staging environment |
-| `feature/*` | New features/fixes | Local only |
+| `master` | Production code - only merge from staging | Production |
+| `staging` | Testing/QA environment | Staging |
+| `feature/*` | Development work | Local only |
 
-## Workflow Rules
+## Workflow
 
-### 1. Feature Development
+### 1. Start New Feature
 ```bash
-# Always branch from staging (which should match master)
+# Always pull from staging
 git checkout staging
 git pull origin staging
 git checkout -b feature/TG-XX-description
 ```
 
-### 2. Completing a Feature
+### 2. Complete Feature → Merge to Staging
 ```bash
-# Create PR targeting staging first
-gh pr create --base staging --title "feat: description"
+# Push feature branch
+git push origin feature/TG-XX-description
 
-# After PR is merged to staging and tested:
+# Create PR targeting STAGING
+gh pr create --base staging --title "feat(TG-XX): description"
+
+# After review, merge to staging
+# Delete feature branch
+```
+
+### 3. Promote Staging → Production (when testing is good)
+```bash
 # Create PR from staging to master
 gh pr create --base master --head staging --title "Release: description"
-```
 
-### 3. Keeping Branches in Sync
-**CRITICAL: staging and master must always be in sync after releases**
-
-```bash
-# After any merge to master, immediately sync staging:
-git checkout staging
-git merge master
-git push origin staging
-```
-
-### 4. Hotfixes (Production Issues)
-```bash
-# Branch from master for urgent fixes
+# Or merge directly if no PR required:
 git checkout master
-git checkout -b hotfix/description
-
-# After fix, merge to BOTH master and staging
-gh pr create --base master
-# Then sync staging
+git merge staging
+git push origin master
 ```
 
-## Claude Code Rules
+## Key Rules
 
-When working with git in this repository:
+1. **Feature branches ALWAYS branch from staging**
+2. **Feature PRs ALWAYS target staging**
+3. **Only staging merges to master** (never feature → master directly)
+4. **Master = Production** - only merge when staging is tested and stable
 
-1. **Before switching branches**: Always run `git fetch && git log --oneline origin/master -1 && git log --oneline origin/staging -1` to check if branches are in sync
+## Claude Code Checklist
 
-2. **After merging any PR to master**: Always ask "Should I sync staging with master?"
+Before any git operation:
+- [ ] Check current branch: `git branch --show-current`
+- [ ] Verify staging/master sync status when promoting
 
-3. **Never merge directly to master**: All changes go through staging first (except hotfixes)
+After merging to staging:
+- [ ] Confirm feature is in staging
+- [ ] Ask user if ready to promote to production
 
-4. **PR workflow**:
-   - Feature branches → staging (via PR)
-   - staging → master (via PR, after testing)
+After merging to master:
+- [ ] Verify master and staging match (they should after a promotion)
 
-5. **After completing a PR merge**: Verify both branches are at the same commit
-
-## Quick Reference
+## Quick Commands
 
 ```bash
-# Check if staging and master are in sync
-git fetch origin
-git log origin/master --oneline -1
-git log origin/staging --oneline -1
+# Start new feature
+git checkout staging && git pull && git checkout -b feature/TG-XX-name
 
-# Sync staging with master
-git checkout staging && git merge origin/master && git push origin staging
+# Check what's in staging vs master
+git log staging --oneline -5
+git log master --oneline -5
+git log master..staging --oneline  # commits in staging not in master
 
-# Sync master with staging (after staging is tested)
-git checkout master && git merge origin/staging && git push origin master
+# Promote staging to production
+git checkout master && git merge staging && git push origin master
 ```
 
-## Branch Protection (Recommended)
+## Visual Flow
 
-Consider enabling these GitHub branch protection rules:
+```
+Time →
 
-- **master**: Require PR reviews, require status checks
-- **staging**: Require PR (no direct pushes)
+feature/TG-22 ──●──●──●─┐
+                       ↓ PR merge
+staging ───────●───────●───────●───────●─┐
+                                         ↓ promote when ready
+master ────────●───────────────────────●─●
+               ↑                         ↑
+           last release              new release
+```
 
 ---
 
