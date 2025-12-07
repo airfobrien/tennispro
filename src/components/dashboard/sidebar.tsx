@@ -23,6 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useAuth } from '@/lib/auth/hooks';
 
 const mainNavItems = [
   {
@@ -64,6 +65,7 @@ const mainNavItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   return (
     <Sidebar>
@@ -72,7 +74,12 @@ export function DashboardSidebar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <span className="text-sm font-bold">TP</span>
           </div>
-          <span className="text-lg font-semibold">TennisPro</span>
+          <div className="flex flex-col">
+            <span className="text-lg font-semibold leading-tight">TennisPro</span>
+            {user?.name && (
+              <span className="text-xs text-muted-foreground">{user.name}</span>
+            )}
+          </div>
         </div>
       </SidebarHeader>
 
