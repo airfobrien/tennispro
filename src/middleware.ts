@@ -25,6 +25,7 @@ const publicPaths = [
   '/contact',
   '/privacy',
   '/terms',
+  '/cookies',
   '/auth/login',
   '/auth/signup',
   '/auth/error',
