@@ -75,7 +75,7 @@ export function Footer({ sections = defaultSections, social, contact }: FooterPr
           {/* Brand column */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
-              <span className="text-xl font-bold">TennisProPlus</span>
+              <span className="text-xl font-bold">TennisPro</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
               Professional tennis coaching platform with AI-powered video analysis
@@ -173,7 +173,7 @@ export function Footer({ sections = defaultSections, social, contact }: FooterPr
         {/* Bottom bar */}
         <div className="mt-12 border-t pt-8">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {currentYear} TennisProPlus. All rights reserved.
+            &copy; {currentYear} TennisPro. All rights reserved.
           </p>
         </div>
       </div>

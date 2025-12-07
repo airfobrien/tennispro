@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "TennisProPlus",
+    "appName": "TennisPro",
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Try again",
@@ -83,7 +83,7 @@
     },
     "cta": {
       "title": "Ready to Transform Your Coaching?",
-      "subtitle": "Join thousands of coaches using TennisProPlus",
+      "subtitle": "Join thousands of coaches using TennisPro",
       "button": "Start Free Trial"
     }
   },
@@ -137,7 +137,7 @@
     "resources": "Resources",
     "company": "Company",
     "legal": "Legal",
-    "copyright": "© {year} TennisProPlus. All rights reserved."
+    "copyright": "© {year} TennisPro. All rights reserved."
   },
   "errors": {
     "notFound": "Page not found",

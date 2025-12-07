@@ -5,7 +5,7 @@ test.describe('Home Page', () => {
     await page.goto('/');
 
     // Check for the main heading or brand name
-    await expect(page.locator('text=TennisProPlus')).toBeVisible();
+    await expect(page.locator('text=TennisPro')).toBeVisible();
   });
 
   test('should have working navigation', async ({ page }) => {

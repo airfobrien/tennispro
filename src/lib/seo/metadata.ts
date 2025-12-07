@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 const siteConfig = {
-  name: 'TennisProPlus',
+  name: 'TennisPro',
   description:
     'Professional tennis coaching platform with AI-powered video analysis and comprehensive student management.',
   url: process.env.NEXT_PUBLIC_APP_URL ?? 'https://tennisproplus.com',

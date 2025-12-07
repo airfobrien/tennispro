@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "TennisProPlus",
+    "appName": "TennisPro",
     "loading": "Carregando...",
     "error": "Ocorreu um erro",
     "retry": "Tentar novamente",
@@ -83,7 +83,7 @@
     },
     "cta": {
       "title": "Pronto para Transformar Seu Treinamento?",
-      "subtitle": "Junte-se a milhares de treinadores usando TennisProPlus",
+      "subtitle": "Junte-se a milhares de treinadores usando TennisPro",
       "button": "Iniciar Avaliação Gratuita"
     }
   },
@@ -137,7 +137,7 @@
     "resources": "Recursos",
     "company": "Empresa",
     "legal": "Legal",
-    "copyright": "© {year} TennisProPlus. Todos os direitos reservados."
+    "copyright": "© {year} TennisPro. Todos os direitos reservados."
   },
   "errors": {
     "notFound": "Página não encontrada",

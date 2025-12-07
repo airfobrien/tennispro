@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Learn about TennisProPlus and our mission to revolutionize tennis coaching with AI-powered technology.',
+    'Learn about TennisPro and our mission to revolutionize tennis coaching with AI-powered technology.',
 };
 
 const stats = [
@@ -79,7 +79,7 @@ export default function AboutPage() {
             <h2 className="mb-6 text-3xl font-bold">Our Story</h2>
             <div className="space-y-4 text-lg text-muted-foreground">
               <p>
-                TennisProPlus was born from a simple observation: professional
+                TennisPro was born from a simple observation: professional
                 tennis players have access to incredible biomechanical analysis
                 technology, but independent coaches and their students often
                 rely on intuition alone.
@@ -91,7 +91,7 @@ export default function AboutPage() {
                 that makes professional-level analysis accessible to every coach.
               </p>
               <p>
-                Today, TennisProPlus serves hundreds of coaches worldwide,
+                Today, TennisPro serves hundreds of coaches worldwide,
                 helping them deliver better results for their students through
                 objective, data-driven insights. But we&apos;re just getting
                 started.
@@ -126,7 +126,7 @@ export default function AboutPage() {
               Ready to Transform Your Coaching?
             </h2>
             <p className="mb-8 text-lg text-muted-foreground">
-              Join hundreds of coaches already using TennisProPlus to deliver
+              Join hundreds of coaches already using TennisPro to deliver
               better results.
             </p>
             <Button size="lg" asChild>

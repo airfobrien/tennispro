@@ -59,7 +59,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <span className="text-sm font-bold">TP</span>
           </div>
-          <span className="text-lg font-semibold">TennisProPlus</span>
+          <span className="text-lg font-semibold">TennisPro</span>
         </Link>
       </div>
 

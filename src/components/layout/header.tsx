@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { SlamSwitcher } from '@/components/layout/slam-switcher';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +27,20 @@ const defaultNavigation: NavItem[] = [
   { label: 'About', href: '/about' },
 ];
 
+// Tennis ball component with seam detail
+function TennisBall({ className }: { className?: string }) {
+  return (
+    <span className={cn('relative inline-block', className)}>
+      {/* Ball body - uses secondary color for complement */}
+      <span className="block h-5 w-5 rounded-full bg-secondary shadow-sm" />
+      {/* Seam curve - creates the tennis ball line effect */}
+      <span className="absolute inset-0 flex items-center justify-center">
+        <span className="h-3.5 w-3.5 rounded-full border-[1.5px] border-secondary-foreground/30 border-l-transparent border-r-transparent rotate-45" />
+      </span>
+    </span>
+  );
+}
+
 export function Header({ navigation = defaultNavigation, showAuth = true }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -34,33 +48,49 @@ export function Header({ navigation = defaultNavigation, showAuth = true }: Head
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold">TennisProPlus</span>
+        {/* Logo - uses theme primary color */}
+        <Link href="/" className="flex items-center space-x-2 group">
+          <span className="text-xl font-bold text-primary transition-colors group-hover:text-primary/80">
+            TennisPro
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:items-center md:gap-6">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'text-sm font-medium transition-colors hover:text-primary',
-                pathname === item.href
-                  ? 'text-foreground'
-                  : 'text-muted-foreground'
-              )}
-              {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <div className="hidden md:flex md:items-center md:gap-1">
+          {navigation.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'relative flex flex-col items-center px-4 py-2 text-sm font-medium transition-all duration-200',
+                  isActive
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+                {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
+              >
+                <span className={cn(isActive && 'mb-1')}>{item.label}</span>
+                {/* Tennis ball indicator below active item */}
+                <span
+                  className={cn(
+                    'absolute -bottom-3 transition-all duration-300',
+                    isActive
+                      ? 'opacity-100 scale-100'
+                      : 'opacity-0 scale-75'
+                  )}
+                >
+                  <TennisBall />
+                </span>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Right side actions */}
         <div className="flex items-center gap-4">
-          <ThemeToggle />
+          <SlamSwitcher />
 
           {showAuth && (
             <div className="hidden md:flex md:items-center md:gap-2">
@@ -90,22 +120,27 @@ export function Header({ navigation = defaultNavigation, showAuth = true }: Head
       {mobileMenuOpen && (
         <div className="border-t md:hidden">
           <div className="container space-y-1 py-4">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'block rounded-md px-3 py-2 text-base font-medium transition-colors',
-                  pathname === item.href
-                    ? 'bg-accent text-accent-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-                {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navigation.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 rounded-md px-3 py-2 text-base font-medium transition-all duration-200',
+                    isActive
+                      ? 'bg-secondary/20 text-primary'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                  {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                >
+                  {/* Tennis ball for active item on mobile */}
+                  {isActive && <TennisBall className="scale-90" />}
+                  {item.label}
+                </Link>
+              );
+            })}
 
             {showAuth && (
               <div className="mt-4 flex flex-col gap-2 border-t pt-4">

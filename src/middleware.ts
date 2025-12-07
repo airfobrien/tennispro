@@ -58,9 +58,6 @@ export default async function middleware(request: NextRequest) {
     return;
   }
 
-  // Apply i18n middleware
-  const response = intlMiddleware(request);
-
   // For protected routes, check auth
   if (!isPublicPath(pathname)) {
     const session = await auth();
@@ -71,7 +68,13 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  return response;
+  // Only apply i18n middleware for coach profile routes (which have [locale])
+  if (pathname.match(/^\/(en|es|fr|pt)\/coach\//)) {
+    return intlMiddleware(request);
+  }
+
+  // For all other routes, continue without i18n processing
+  return;
 }
 
 export const config = {

@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "TennisProPlus",
+    "appName": "TennisPro",
     "loading": "Chargement...",
     "error": "Une erreur s'est produite",
     "retry": "Réessayer",
@@ -83,7 +83,7 @@
     },
     "cta": {
       "title": "Prêt à Transformer Votre Coaching ?",
-      "subtitle": "Rejoignez des milliers d'entraîneurs utilisant TennisProPlus",
+      "subtitle": "Rejoignez des milliers d'entraîneurs utilisant TennisPro",
       "button": "Commencer l'Essai Gratuit"
     }
   },
@@ -137,7 +137,7 @@
     "resources": "Ressources",
     "company": "Entreprise",
     "legal": "Légal",
-    "copyright": "© {year} TennisProPlus. Tous droits réservés."
+    "copyright": "© {year} TennisPro. Tous droits réservés."
   },
   "errors": {
     "notFound": "Page non trouvée",

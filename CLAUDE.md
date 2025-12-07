@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-TennisProPlus is a professional tennis coaching platform combining business management with AI-powered biomechanical video analysis. The platform helps tennis coaches manage students, analyze technique through pose estimation, and track progress over time.
+TennisPro is a professional tennis coaching platform combining business management with AI-powered biomechanical video analysis. The platform helps tennis coaches manage students, analyze technique through pose estimation, and track progress over time.
 
 ## Tech Stack
 
@@ -389,4 +389,29 @@ export async function getCoachProfile(slug: string) {
   
   return await sanityClient.fetch(query, { slug });
 }
+```
+
+### Grand Slam Theme System
+
+The application uses a unique theming system based on the four Grand Slam tennis tournaments instead of traditional light/dark mode:
+
+| Tournament | ID | Primary Color | Background |
+|------------|-----|---------------|------------|
+| Australian Open | `australian-open` | #377DB8 (True Blue) | Light blue tint |
+| French Open | `french-open` | #B24E3A (Red Clay) | Warm cream |
+| Wimbledon | `wimbledon` | #6C8E48 (Grass Green) | Crisp white |
+| US Open | `us-open` | #3C638E (Blue) | Cool blue-gray |
+
+**Implementation:**
+- Themes defined in `src/app/globals.css` using CSS custom properties (oklch format)
+- Theme selection via `SlamSwitcher` component in the header
+- Applied via `data-slam` attribute on `<html>` element
+- Persisted in `localStorage` under key `slam-theme`
+- Default theme: Australian Open
+
+**Usage:**
+```typescript
+// To programmatically change theme:
+document.documentElement.setAttribute('data-slam', 'french-open');
+localStorage.setItem('slam-theme', 'french-open');
 ```

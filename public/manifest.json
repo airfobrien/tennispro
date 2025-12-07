@@ -1,6 +1,6 @@
 {
-  "name": "TennisProPlus",
-  "short_name": "TennisProPlus",
+  "name": "TennisPro",
+  "short_name": "TennisPro",
   "description": "Professional tennis coaching platform with AI-powered video analysis",
   "start_url": "/",
   "display": "standalone",

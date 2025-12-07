@@ -30,7 +30,7 @@ const templates: Template[] = [
     levels: 4,
     skills: 12,
     featured: true,
-    author: 'TennisProPlus',
+    author: 'TennisPro',
     uses: 245,
   },
   {
@@ -41,7 +41,7 @@ const templates: Template[] = [
     levels: 6,
     skills: 24,
     featured: true,
-    author: 'TennisProPlus',
+    author: 'TennisPro',
     uses: 189,
   },
   {
@@ -52,7 +52,7 @@ const templates: Template[] = [
     levels: 5,
     skills: 18,
     featured: false,
-    author: 'TennisProPlus',
+    author: 'TennisPro',
     uses: 127,
   },
   {
@@ -63,7 +63,7 @@ const templates: Template[] = [
     levels: 4,
     skills: 8,
     featured: true,
-    author: 'TennisProPlus',
+    author: 'TennisPro',
     uses: 312,
   },
   {
@@ -74,7 +74,7 @@ const templates: Template[] = [
     levels: 3,
     skills: 9,
     featured: false,
-    author: 'TennisProPlus',
+    author: 'TennisPro',
     uses: 78,
   },
   {
@@ -85,7 +85,7 @@ const templates: Template[] = [
     levels: 6,
     skills: 20,
     featured: false,
-    author: 'TennisProPlus',
+    author: 'TennisPro',
     uses: 94,
   },
 ];
