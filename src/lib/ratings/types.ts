@@ -18,18 +18,31 @@ export interface WTNRating {
   profileUrl?: string;
 }
 
+// NTRP (National Tennis Rating Program) - Scale: 1.5 to 7.0 (higher = better)
+// Primarily used for adult recreational players in the US
+export interface NTRPRating {
+  rating: number; // 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0
+  type: 'self' | 'computer' | 'tournament' | 'appeal'; // How the rating was established
+  lastUpdated: Date;
+  expirationDate?: Date; // NTRP ratings typically expire/reset annually
+  profileUrl?: string;
+}
+
 export interface RatingSnapshot {
   date: Date;
-  utrSingles: number;
-  utrDoubles: number;
-  wtnSingles: number;
-  wtnDoubles: number;
+  utrSingles?: number;
+  utrDoubles?: number;
+  wtnSingles?: number;
+  wtnDoubles?: number;
+  ntrp?: number;
 }
 
 export interface PlayerRatings {
   studentId: string;
-  utr: UTRRating;
-  wtn: WTNRating;
+  age?: number; // Player age - affects which ratings are typical
+  utr?: UTRRating; // Optional - may not be established
+  wtn?: WTNRating; // Optional - may not be established
+  ntrp?: NTRPRating; // Optional - primarily for adult players (18+)
   history: RatingSnapshot[];
 }
 
@@ -57,6 +70,21 @@ export const WTN_LEVELS = {
   ATP_WTA: { min: 1.0, max: 3.0, label: 'ATP/WTA Level' },
 } as const;
 
+// NTRP Rating Levels (official USTA descriptions)
+export const NTRP_LEVELS = {
+  BEGINNER: { min: 1.5, max: 2.0, label: 'Beginner' },
+  BEGINNER_PLUS: { min: 2.0, max: 2.5, label: 'Beginner+' },
+  INTERMEDIATE: { min: 2.5, max: 3.0, label: 'Intermediate' },
+  INTERMEDIATE_PLUS: { min: 3.0, max: 3.5, label: 'Intermediate+' },
+  ADVANCED_INTERMEDIATE: { min: 3.5, max: 4.0, label: 'Advanced Intermediate' },
+  ADVANCED: { min: 4.0, max: 4.5, label: 'Advanced' },
+  ADVANCED_PLUS: { min: 4.5, max: 5.0, label: 'Advanced+' },
+  EXPERT: { min: 5.0, max: 5.5, label: 'Expert' },
+  COLLEGIATE: { min: 5.5, max: 6.0, label: 'Collegiate' },
+  PRO_SATELLITE: { min: 6.0, max: 6.5, label: 'Pro Satellite' },
+  PRO: { min: 6.5, max: 7.0, label: 'Professional' },
+} as const;
+
 export function getUTRLevel(rating: number): string {
   for (const level of Object.values(UTR_LEVELS)) {
     if (rating >= level.min && rating < level.max) {
@@ -75,8 +103,21 @@ export function getWTNLevel(rating: number): string {
   return 'Unknown';
 }
 
+export function getNTRPLevel(rating: number): string {
+  for (const level of Object.values(NTRP_LEVELS)) {
+    if (rating >= level.min && rating < level.max) {
+      return level.label;
+    }
+  }
+  // Handle upper bound
+  if (rating >= 7.0) {
+    return 'Professional';
+  }
+  return 'Unknown';
+}
+
 // Calculate rating change trend
-export function calculateTrend(history: RatingSnapshot[], type: 'utr' | 'wtn'): {
+export function calculateTrend(history: RatingSnapshot[], type: 'utr' | 'wtn' | 'ntrp'): {
   direction: 'up' | 'down' | 'stable';
   change: number;
   percentage: number;
@@ -95,20 +136,37 @@ export function calculateTrend(history: RatingSnapshot[], type: 'utr' | 'wtn'): 
     return { direction: 'stable', change: 0, percentage: 0 };
   }
 
-  const current = type === 'utr' ? currentSnapshot.utrSingles : currentSnapshot.wtnSingles;
-  const previous = type === 'utr' ? previousSnapshot.utrSingles : previousSnapshot.wtnSingles;
+  let current: number | undefined;
+  let previous: number | undefined;
+
+  if (type === 'utr') {
+    current = currentSnapshot.utrSingles;
+    previous = previousSnapshot.utrSingles;
+  } else if (type === 'wtn') {
+    current = currentSnapshot.wtnSingles;
+    previous = previousSnapshot.wtnSingles;
+  } else {
+    current = currentSnapshot.ntrp;
+    previous = previousSnapshot.ntrp;
+  }
+
+  // Handle undefined values (rating not established)
+  if (current === undefined || previous === undefined) {
+    return { direction: 'stable', change: 0, percentage: 0 };
+  }
 
   const change = current - previous;
   const percentage = previous !== 0 ? (change / previous) * 100 : 0;
 
   // For WTN, lower is better, so invert the direction logic
+  // For UTR and NTRP, higher is better
   let direction: 'up' | 'down' | 'stable';
   if (Math.abs(change) < 0.1) {
     direction = 'stable';
   } else if (type === 'wtn') {
     direction = change < 0 ? 'up' : 'down'; // Lower WTN = improvement
   } else {
-    direction = change > 0 ? 'up' : 'down'; // Higher UTR = improvement
+    direction = change > 0 ? 'up' : 'down'; // Higher UTR/NTRP = improvement
   }
 
   return { direction, change: Math.abs(change), percentage: Math.abs(percentage) };
