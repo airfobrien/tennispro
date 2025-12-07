@@ -11,10 +11,11 @@ import {
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { StudentRatingsSummary } from '@/components/ratings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getStudentRatings } from '@/lib/ratings';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -56,51 +57,58 @@ const stats = [
 const recentStudents = [
   {
     id: '1',
-    name: 'Sarah Johnson',
+    name: 'Alex Thompson',
     avatar: null,
     lastLesson: '2 days ago',
     progress: 85,
+    ratingStudentId: 'student-uuid-001', // Adult - UTR, WTN, NTRP
   },
   {
     id: '2',
-    name: 'Mike Chen',
+    name: 'Jordan Williams',
     avatar: null,
     lastLesson: '3 days ago',
     progress: 72,
+    ratingStudentId: 'student-uuid-002', // Junior - UTR, WTN only
   },
   {
     id: '3',
-    name: 'Emma Williams',
+    name: 'Casey Martinez',
     avatar: null,
     lastLesson: '5 days ago',
     progress: 91,
+    ratingStudentId: 'student-uuid-003', // Senior - NTRP only
   },
   {
     id: '4',
-    name: 'John Smith',
+    name: 'Riley Johnson',
     avatar: null,
     lastLesson: '1 week ago',
     progress: 68,
+    ratingStudentId: 'student-uuid-004', // College - UTR, WTN, NTRP
   },
 ];
 
 const upcomingLessons = [
   {
     id: '1',
-    student: 'Sarah Johnson',
+    studentId: '1',
+    student: 'Alex Thompson',
     type: 'Private',
     time: 'Today, 2:00 PM',
     duration: '1 hour',
   },
   {
     id: '2',
-    student: 'Mike Chen',
+    studentId: '2',
+    student: 'Jordan Williams',
     type: 'Private',
     time: 'Today, 4:00 PM',
     duration: '1 hour',
   },
   {
     id: '3',
+    studentId: null, // Group session - no single student
     student: 'Group Session',
     type: 'Group',
     time: 'Tomorrow, 10:00 AM',
@@ -191,7 +199,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Students</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" className="hover:bg-accent/15" asChild>
               <Link href="/dashboard/students">
                 View all
                 <ArrowUpRight className="ml-1 h-4 w-4" />
@@ -200,36 +208,44 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentStudents.map((student) => (
-                <div
-                  key={student.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={student.avatar ?? undefined} />
-                      <AvatarFallback>
-                        {student.name
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{student.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Last lesson: {student.lastLesson}
-                      </p>
+              {recentStudents.map((student) => {
+                const ratings = student.ratingStudentId
+                  ? getStudentRatings(student.ratingStudentId)
+                  : null;
+
+                return (
+                  <Link
+                    key={student.id}
+                    href={`/dashboard/students/${student.id}`}
+                    className="flex items-center justify-between rounded-lg p-2 -m-2 transition-colors hover:bg-accent/15"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src={student.avatar ?? undefined} />
+                        <AvatarFallback>
+                          {student.name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{student.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Last lesson: {student.lastLesson}
+                        </p>
+                        <StudentRatingsSummary ratings={ratings} className="mt-1" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-right">
-                      <p className="text-sm font-medium">{student.progress}%</p>
-                      <p className="text-xs text-muted-foreground">Progress</p>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <p className="text-sm font-medium">{student.progress}%</p>
+                        <p className="text-xs text-muted-foreground">Progress</p>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
@@ -238,7 +254,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Upcoming Lessons</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" className="hover:bg-accent/15" asChild>
               <Link href="/dashboard/lessons">
                 View all
                 <ArrowUpRight className="ml-1 h-4 w-4" />
@@ -247,27 +263,49 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {upcomingLessons.map((lesson) => (
-                <div
-                  key={lesson.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-                      <Clock className="h-4 w-4 text-primary" />
+              {upcomingLessons.map((lesson) => {
+                const content = (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                        <Clock className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{lesson.student}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {lesson.time} · {lesson.duration}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">{lesson.student}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {lesson.time} · {lesson.duration}
-                      </p>
-                    </div>
+                    <span
+                      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium shadow-sm ${
+                        lesson.type === 'Private'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-purple-600 text-white'
+                      }`}
+                    >
+                      {lesson.type}
+                    </span>
+                  </>
+                );
+
+                return lesson.studentId ? (
+                  <Link
+                    key={lesson.id}
+                    href={`/dashboard/students/${lesson.studentId}`}
+                    className="flex items-center justify-between rounded-lg p-2 -m-2 transition-colors hover:bg-accent/15"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <div
+                    key={lesson.id}
+                    className="flex items-center justify-between p-2 -m-2"
+                  >
+                    {content}
                   </div>
-                  <Badge variant={lesson.type === 'Private' ? 'default' : 'secondary'}>
-                    {lesson.type}
-                  </Badge>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
@@ -301,11 +339,15 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                  <Badge
-                    variant={video.status === 'analyzed' ? 'default' : 'secondary'}
+                  <span
+                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium shadow-sm ${
+                      video.status === 'analyzed'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-amber-500 text-white'
+                    }`}
                   >
                     {video.status === 'analyzed' ? 'Analyzed' : 'Processing'}
-                  </Badge>
+                  </span>
                 </div>
               ))}
             </div>
