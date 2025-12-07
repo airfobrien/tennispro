@@ -5,6 +5,7 @@ declare module 'next-auth' {
   interface User {
     id: string;
     coachId?: string;
+    studentId?: string;
     role?: string;
     tier?: string;
   }
@@ -13,6 +14,7 @@ declare module 'next-auth' {
     user: User & {
       id: string;
       coachId?: string;
+      studentId?: string;
       role?: string;
       tier?: string;
     };
@@ -24,6 +26,7 @@ declare module 'next-auth/jwt' {
   interface JWT {
     cognitoUserId?: string;
     coachId?: string;
+    studentId?: string;
     role?: string;
     tier?: string;
     accessToken?: string;
