@@ -11,17 +11,17 @@ interface StudentRatingsSummaryProps {
 const RATING_STYLES = {
   utr: {
     label: 'UTR',
-    bgClass: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    bgClass: 'bg-emerald-600 text-white',
     format: (v: number) => v.toFixed(2),
   },
   wtn: {
     label: 'WTN',
-    bgClass: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    bgClass: 'bg-blue-600 text-white',
     format: (v: number) => v.toFixed(1),
   },
   ntrp: {
     label: 'NTRP',
-    bgClass: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+    bgClass: 'bg-orange-500 text-white',
     format: (v: number) => v.toFixed(1),
   },
 };
@@ -50,11 +50,11 @@ export function StudentRatingsSummary({ ratings, className }: StudentRatingsSumm
       {ratings.utr && (
         <span
           className={cn(
-            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium',
+            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium shadow-sm',
             RATING_STYLES.utr.bgClass
           )}
         >
-          <span className="opacity-70">{RATING_STYLES.utr.label}</span>
+          <span className="opacity-80">{RATING_STYLES.utr.label}</span>
           <span className="font-semibold tabular-nums">
             {RATING_STYLES.utr.format(ratings.utr.singles)}
           </span>
@@ -63,11 +63,11 @@ export function StudentRatingsSummary({ ratings, className }: StudentRatingsSumm
       {ratings.wtn && (
         <span
           className={cn(
-            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium',
+            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium shadow-sm',
             RATING_STYLES.wtn.bgClass
           )}
         >
-          <span className="opacity-70">{RATING_STYLES.wtn.label}</span>
+          <span className="opacity-80">{RATING_STYLES.wtn.label}</span>
           <span className="font-semibold tabular-nums">
             {RATING_STYLES.wtn.format(ratings.wtn.singles)}
           </span>
@@ -76,11 +76,11 @@ export function StudentRatingsSummary({ ratings, className }: StudentRatingsSumm
       {ratings.ntrp && (
         <span
           className={cn(
-            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium',
+            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium shadow-sm',
             RATING_STYLES.ntrp.bgClass
           )}
         >
-          <span className="opacity-70">{RATING_STYLES.ntrp.label}</span>
+          <span className="opacity-80">{RATING_STYLES.ntrp.label}</span>
           <span className="font-semibold tabular-nums">
             {RATING_STYLES.ntrp.format(ratings.ntrp.rating)}
           </span>
