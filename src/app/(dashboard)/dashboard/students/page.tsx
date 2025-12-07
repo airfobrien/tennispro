@@ -2,7 +2,7 @@
 
 import { Filter, Plus, Search, Upload, MoreHorizontal, Mail, Archive, UserCheck } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import { StudentRatingsSummary } from '@/components/ratings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -33,100 +33,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useCoachId } from '@/lib/auth/hooks';
+import { getStudentsByCoachId, type MockStudent } from '@/lib/mock-data';
 import { getStudentRatings } from '@/lib/ratings';
 import { cn } from '@/lib/utils';
 
-
-interface Student {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatar?: string;
-  skillLevel: 'beginner' | 'intermediate' | 'advanced' | 'professional';
-  status: 'active' | 'inactive' | 'invited' | 'archived';
-  lastLesson?: string;
-  totalLessons: number;
-  totalVideos: number;
-  joinedAt: string;
-  ratingStudentId?: string; // Links to ratings mock data
-}
-
-const mockStudents: Student[] = [
-  {
-    id: '1',
-    firstName: 'Alex',
-    lastName: 'Thompson',
-    email: 'alex.t@email.com',
-    skillLevel: 'intermediate',
-    status: 'active',
-    lastLesson: '2 days ago',
-    totalLessons: 24,
-    totalVideos: 15,
-    joinedAt: '2024-06-15',
-    ratingStudentId: 'student-uuid-001', // Adult - UTR, WTN, NTRP
-  },
-  {
-    id: '2',
-    firstName: 'Jordan',
-    lastName: 'Williams',
-    email: 'jordan.w@email.com',
-    skillLevel: 'advanced',
-    status: 'active',
-    lastLesson: '1 week ago',
-    totalLessons: 48,
-    totalVideos: 32,
-    joinedAt: '2024-01-10',
-    ratingStudentId: 'student-uuid-002', // Junior (16) - UTR, WTN only
-  },
-  {
-    id: '3',
-    firstName: 'Casey',
-    lastName: 'Martinez',
-    email: 'casey.m@email.com',
-    skillLevel: 'intermediate',
-    status: 'active',
-    lastLesson: 'Yesterday',
-    totalLessons: 36,
-    totalVideos: 18,
-    joinedAt: '2024-03-01',
-    ratingStudentId: 'student-uuid-003', // Senior (55) - NTRP only
-  },
-  {
-    id: '4',
-    firstName: 'Riley',
-    lastName: 'Johnson',
-    email: 'riley.j@email.com',
-    skillLevel: 'professional',
-    status: 'active',
-    lastLesson: '3 days ago',
-    totalLessons: 96,
-    totalVideos: 64,
-    joinedAt: '2023-03-15',
-    ratingStudentId: 'student-uuid-004', // College (20) - UTR, WTN, NTRP
-  },
-  {
-    id: '5',
-    firstName: 'Emily',
-    lastName: 'Davis',
-    email: 'emily.davis@email.com',
-    skillLevel: 'beginner',
-    status: 'invited',
-    totalLessons: 0,
-    totalVideos: 0,
-    joinedAt: '2024-10-20',
-    // No rating ID - new student without ratings
-  },
-];
-
-const skillLevelColors: Record<Student['skillLevel'], string> = {
+const skillLevelColors: Record<MockStudent['skillLevel'], string> = {
   beginner: 'bg-green-500/15 text-green-600 dark:text-green-400',
   intermediate: 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
   advanced: 'bg-purple-500/15 text-purple-600 dark:text-purple-400',
   professional: 'bg-orange-500/15 text-orange-600 dark:text-orange-400',
 };
 
-const statusColors: Record<Student['status'], string> = {
+const statusColors: Record<MockStudent['status'], string> = {
   active: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
   inactive: 'bg-gray-500/15 text-gray-600 dark:text-gray-400',
   invited: 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400',
@@ -134,20 +53,28 @@ const statusColors: Record<Student['status'], string> = {
 };
 
 export default function StudentsPage() {
+  const coachId = useCoachId();
   const [searchQuery, setSearchQuery] = useState('');
   const [skillFilter, setSkillFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [students] = useState<Student[]>(mockStudents);
 
-  const filteredStudents = students.filter((student) => {
-    const matchesSearch =
-      student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSkill = skillFilter === 'all' || student.skillLevel === skillFilter;
-    const matchesStatus = statusFilter === 'all' || student.status === statusFilter;
-    return matchesSearch && matchesSkill && matchesStatus;
-  });
+  // Get students for the current coach
+  const students = useMemo(() => {
+    if (!coachId) return [];
+    return getStudentsByCoachId(coachId);
+  }, [coachId]);
+
+  const filteredStudents = useMemo(() => {
+    return students.filter((student) => {
+      const matchesSearch =
+        student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.email.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSkill = skillFilter === 'all' || student.skillLevel === skillFilter;
+      const matchesStatus = statusFilter === 'all' || student.status === statusFilter;
+      return matchesSearch && matchesSkill && matchesStatus;
+    });
+  }, [students, searchQuery, skillFilter, statusFilter]);
 
   const activeCount = students.filter((s) => s.status === 'active').length;
   const invitedCount = students.filter((s) => s.status === 'invited').length;
@@ -201,7 +128,7 @@ export default function StudentsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>This Month</CardDescription>
-            <CardTitle className="text-3xl">+2</CardTitle>
+            <CardTitle className="text-3xl">+{Math.min(2, students.length)}</CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -272,7 +199,9 @@ export default function StudentsPage() {
                 {filteredStudents.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="h-24 text-center">
-                      No students found.
+                      {students.length === 0
+                        ? 'No students yet. Add your first student to get started.'
+                        : 'No students found matching your filters.'}
                     </TableCell>
                   </TableRow>
                 ) : (

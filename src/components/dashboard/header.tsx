@@ -1,9 +1,10 @@
 'use client';
 
-import { Bell, Search } from 'lucide-react';
+import { Bell, CreditCard, HelpCircle, LogOut, Search, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 
 import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,8 +18,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useAuth } from '@/lib/auth/hooks';
 
 export function DashboardHeader() {
+  const { user } = useAuth();
+
+  const userInitials = user?.name
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+    : 'TC';
+
   // Mock notifications - replace with real data
   const notifications = [
     {
@@ -120,6 +132,63 @@ export function DashboardHeader() {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild className="justify-center text-primary">
               <Link href="/notifications">View all notifications</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Profile Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user?.image ?? undefined} />
+                <AvatarFallback className="text-xs">
+                  {userInitials}
+                </AvatarFallback>
+              </Avatar>
+              <span className="sr-only">Profile menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">{user?.name ?? 'Coach'}</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  {user?.email ?? 'coach@example.com'}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/account">
+                <CreditCard className="mr-2 h-4 w-4" />
+                Account
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/profile">
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/settings">
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/help">
+                <HelpCircle className="mr-2 h-4 w-4" />
+                Help & Support
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="text-destructive focus:text-destructive">
+              <Link href="/auth/logout">
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
