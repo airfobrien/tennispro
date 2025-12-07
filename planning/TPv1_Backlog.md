@@ -1,7 +1,7 @@
 # TennisPro V1 (TPv1) - Feature Backlog
 
 **Document ID:** TPv1-BACKLOG-001
-**Version:** 1.4.0
+**Version:** 1.5.0
 **Created:** 2025-12-07
 **Last Updated:** 2025-12-07
 **Status:** Living Document
@@ -295,6 +295,62 @@ Implement proper dark/light mode theme options in the student and coach portals.
 
 ---
 
+### BL-006: Profile Pages Polish
+
+**Priority:** Medium
+**Category:** UI/UX
+**Requested:** 2025-12-07
+**Affects:** Coach Portal
+
+#### Description
+
+Clean up and polish the profile-related pages in the coach portal. The basic structure and placeholders are in place, but the pages need refinement for a polished user experience.
+
+#### Pages to Polish
+
+1. **Account Page** (`/dashboard/account`)
+   - [ ] Improve subscription plan comparison layout
+   - [ ] Add actual Stripe integration for payments
+   - [ ] Implement plan upgrade/downgrade flow
+   - [ ] Add billing history with real data
+   - [ ] Add payment method management
+
+2. **Profile Page** (`/dashboard/profile`)
+   - [ ] Enable form editing (currently disabled)
+   - [ ] Implement profile photo upload to S3
+   - [ ] Add form validation
+   - [ ] Save profile changes to database
+   - [ ] Add coaching credentials persistence
+   - [ ] Consider public profile preview
+
+3. **Help & Support Page** (`/help`)
+   - [ ] Implement search functionality
+   - [ ] Add more FAQ content
+   - [ ] Wire up Email Support button (SES integration)
+   - [ ] Consider live chat integration (Intercom, etc.)
+   - [ ] Add video tutorials section
+
+#### Technical Considerations
+
+- Profile photo upload: S3 presigned URLs, image resizing
+- Stripe integration for subscription management
+- Form state management (react-hook-form already in use)
+- API endpoints for profile CRUD operations
+
+#### Dependencies
+
+- AWS S3 (for profile photos)
+- Stripe Connect (for subscriptions)
+- SES (for support emails)
+
+#### Open Questions
+
+1. Should coaches have public-facing profiles for marketing?
+2. What support channels are priority (email, chat, phone)?
+3. Should we add a knowledge base/docs section?
+
+---
+
 ## Backlog Template
 
 ```markdown
@@ -337,3 +393,4 @@ Implement proper dark/light mode theme options in the student and coach portals.
 | 1.2.0 | 2025-12-07 | Added BL-003 (Analytics Panel - placeholder for design thinking) |
 | 1.3.0 | 2025-12-07 | Added BL-004 (Notifications System for Student & Coach portals) |
 | 1.4.0 | 2025-12-07 | Added BL-005 (Dark/Light Mode Theme Options) |
+| 1.5.0 | 2025-12-07 | Added BL-006 (Profile Pages Polish) |
