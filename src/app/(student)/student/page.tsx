@@ -10,12 +10,15 @@ import {
   Video,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
+import { RatingCard } from '@/components/ratings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { getMonthlyChange, getStudentRatings } from '@/lib/ratings';
 
 // Mock data
 const mockStudent = {
@@ -55,6 +58,11 @@ const mockUpcomingLesson = {
 };
 
 export default function StudentDashboard() {
+  const { data: session } = useSession();
+  const studentId = session?.user?.studentId;
+  const ratings = studentId ? getStudentRatings(studentId) : null;
+  const monthlyChange = ratings ? getMonthlyChange(ratings) : null;
+
   const coachInitials = mockCoach.name
     .split(' ')
     .map((n) => n[0])
@@ -66,7 +74,7 @@ export default function StudentDashboard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Welcome back, {mockStudent.name.split(' ')[0]}!
+            Welcome back, {session?.user?.name?.split(' ')[0] || mockStudent.name.split(' ')[0]}!
           </h1>
           <p className="text-muted-foreground">
             Track your tennis journey and improve your game
@@ -79,6 +87,30 @@ export default function StudentDashboard() {
           </Link>
         </Button>
       </div>
+
+      {/* Rating Cards */}
+      {ratings && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <RatingCard
+            type="utr"
+            singles={ratings.utr.singles}
+            doubles={ratings.utr.doubles}
+            reliability={ratings.utr.singlesReliability}
+            lastUpdated={ratings.utr.lastUpdated}
+            profileUrl={ratings.utr.profileUrl}
+            monthlyChange={monthlyChange?.utr}
+          />
+          <RatingCard
+            type="wtn"
+            singles={ratings.wtn.singles}
+            doubles={ratings.wtn.doubles}
+            confidence={ratings.wtn.confidence}
+            lastUpdated={ratings.wtn.lastUpdated}
+            profileUrl={ratings.wtn.profileUrl}
+            monthlyChange={monthlyChange?.wtn}
+          />
+        </div>
+      )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Current Progress */}

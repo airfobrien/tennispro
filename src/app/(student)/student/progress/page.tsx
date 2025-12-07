@@ -2,10 +2,13 @@
 
 import { CheckCircle2, Circle, Lock, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
+import { RatingsProgressChart } from '@/components/ratings';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { getStudentRatings } from '@/lib/ratings';
 import { cn } from '@/lib/utils';
 
 // Mock progression path data
@@ -66,6 +69,10 @@ const statusColors = {
 };
 
 export default function StudentProgressPage() {
+  const { data: session } = useSession();
+  const studentId = session?.user?.studentId;
+  const ratings = studentId ? getStudentRatings(studentId) : null;
+
   const totalSkills = mockPath.levels.reduce((acc, l) => acc + l.skills, 0);
   const completedSkills = mockPath.levels.reduce((acc, l) => acc + l.completedSkills, 0);
   const overallProgress = Math.round((completedSkills / totalSkills) * 100);
@@ -77,6 +84,11 @@ export default function StudentProgressPage() {
         <h1 className="text-2xl font-bold tracking-tight">My Progress</h1>
         <p className="text-muted-foreground">{mockPath.name}</p>
       </div>
+
+      {/* Rating Progress Chart */}
+      {ratings && (
+        <RatingsProgressChart history={ratings.history} />
+      )}
 
       {/* Overall Progress Card */}
       <Card>
