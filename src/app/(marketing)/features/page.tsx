@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'Features',
   description:
-    'Discover the powerful features of TennisProPlus - AI video analysis, student management, progress tracking, and more.',
+    'Discover the powerful features of TennisPro - AI video analysis, student management, progress tracking, and more.',
 };
 
 const mainFeatures = [

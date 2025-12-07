@@ -18,28 +18,28 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'TennisProPlus',
-    template: '%s | TennisProPlus',
+    default: 'TennisPro',
+    template: '%s | TennisPro',
   },
   description: 'Professional tennis coaching platform with AI-powered video analysis',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'TennisProPlus',
+    title: 'TennisPro',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: 'website',
-    siteName: 'TennisProPlus',
-    title: 'TennisProPlus',
+    siteName: 'TennisPro',
+    title: 'TennisPro',
     description: 'Professional tennis coaching platform with AI-powered video analysis',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TennisProPlus',
+    title: 'TennisPro',
     description: 'Professional tennis coaching platform with AI-powered video analysis',
   },
 };

@@ -19,7 +19,7 @@ export function CTA() {
               Ready to Transform Your Coaching?
             </h2>
             <p className="mb-8 text-lg opacity-90">
-              Join thousands of tennis coaches using TennisProPlus to deliver
+              Join thousands of tennis coaches using TennisPro to deliver
               better results for their students. Start your free trial today.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">

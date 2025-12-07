@@ -3,7 +3,7 @@ import { Star } from 'lucide-react';
 const testimonials = [
   {
     quote:
-      "TennisProPlus has transformed how I analyze my students' technique. The AI insights save me hours of manual video review.",
+      "TennisPro has transformed how I analyze my students' technique. The AI insights save me hours of manual video review.",
     author: 'Maria Santos',
     role: 'Head Coach, Miami Tennis Academy',
     rating: 5,
@@ -33,7 +33,7 @@ export function Testimonials() {
             Trusted by Coaches Worldwide
           </h2>
           <p className="text-lg text-muted-foreground">
-            See what tennis coaches are saying about TennisProPlus
+            See what tennis coaches are saying about TennisPro
           </p>
         </div>
 

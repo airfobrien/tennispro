@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'Simple, transparent pricing for TennisProPlus. Choose the plan that fits your coaching practice.',
+    'Simple, transparent pricing for TennisPro. Choose the plan that fits your coaching practice.',
 };
 
 const plans = [

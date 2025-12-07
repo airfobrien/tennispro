@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { SlamSwitcher } from '@/components/layout/slam-switcher';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -36,7 +36,7 @@ export function Header({ navigation = defaultNavigation, showAuth = true }: Head
       <nav className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold">TennisProPlus</span>
+          <span className="text-xl font-bold">TennisPro</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -60,7 +60,7 @@ export function Header({ navigation = defaultNavigation, showAuth = true }: Head
 
         {/* Right side actions */}
         <div className="flex items-center gap-4">
-          <ThemeToggle />
+          <SlamSwitcher />
 
           {showAuth && (
             <div className="hidden md:flex md:items-center md:gap-2">

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Get in touch with the TennisProPlus team. We\'re here to help with questions about our platform.',
+    'Get in touch with the TennisPro team. We\'re here to help with questions about our platform.',
 };
 
 const contactInfo = [
@@ -44,7 +44,7 @@ export default function ContactPage() {
               Get in Touch
             </h1>
             <p className="text-lg text-muted-foreground md:text-xl">
-              Have questions about TennisProPlus? We&apos;re here to help.
+              Have questions about TennisPro? We&apos;re here to help.
             </p>
           </div>
         </div>
