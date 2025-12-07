@@ -13,8 +13,16 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 import { cn } from '@/lib/utils';
+
+// Mock coach data for development - maps coachId to coach info
+const mockCoachNames: Record<string, string> = {
+  'coach-uuid-001': 'Demo Coach',
+  'coach-uuid-002': 'Admin Coach',
+  'coach-uuid-003': 'Starter Coach',
+};
 
 const navItems = [
   { href: '/student', label: 'Dashboard', icon: Home },
@@ -38,6 +46,11 @@ interface StudentSidebarProps {
 
 export function StudentSidebar({ className }: StudentSidebarProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  // Get coach name from session coachId
+  const coachId = session?.user?.coachId;
+  const coachName = coachId ? mockCoachNames[coachId] : null;
 
   const isActive = (href: string) => {
     if (href === '/student') {
@@ -55,12 +68,17 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
     >
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/student" className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <span className="text-sm font-bold">TP</span>
           </div>
-          <span className="text-lg font-semibold">TennisPro</span>
-        </Link>
+          <div className="flex flex-col">
+            <span className="text-lg font-semibold leading-tight">TennisPro</span>
+            {coachName && (
+              <span className="text-xs text-muted-foreground">{coachName}</span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}
