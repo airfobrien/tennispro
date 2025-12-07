@@ -87,7 +87,14 @@ export default function StudentProgressPage() {
 
       {/* Rating Progress Chart */}
       {ratings && (
-        <RatingsProgressChart history={ratings.history} />
+        <RatingsProgressChart
+          history={ratings.history}
+          currentRatings={{
+            utr: ratings.utr?.singles,
+            wtn: ratings.wtn?.singles,
+            ntrp: ratings.ntrp?.rating,
+          }}
+        />
       )}
 
       {/* Overall Progress Card */}

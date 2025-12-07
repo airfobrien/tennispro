@@ -88,29 +88,36 @@ export default function StudentDashboard() {
         </Button>
       </div>
 
-      {/* Rating Cards */}
-      {ratings && (
-        <div className="grid gap-4 md:grid-cols-2">
-          <RatingCard
-            type="utr"
-            singles={ratings.utr.singles}
-            doubles={ratings.utr.doubles}
-            reliability={ratings.utr.singlesReliability}
-            lastUpdated={ratings.utr.lastUpdated}
-            profileUrl={ratings.utr.profileUrl}
-            monthlyChange={monthlyChange?.utr}
-          />
-          <RatingCard
-            type="wtn"
-            singles={ratings.wtn.singles}
-            doubles={ratings.wtn.doubles}
-            confidence={ratings.wtn.confidence}
-            lastUpdated={ratings.wtn.lastUpdated}
-            profileUrl={ratings.wtn.profileUrl}
-            monthlyChange={monthlyChange?.wtn}
-          />
-        </div>
-      )}
+      {/* Rating Cards - Always show all three */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <RatingCard
+          type="utr"
+          singles={ratings?.utr?.singles}
+          doubles={ratings?.utr?.doubles}
+          reliability={ratings?.utr?.singlesReliability}
+          lastUpdated={ratings?.utr?.lastUpdated}
+          profileUrl={ratings?.utr?.profileUrl}
+          monthlyChange={monthlyChange?.utr}
+        />
+        <RatingCard
+          type="wtn"
+          singles={ratings?.wtn?.singles}
+          doubles={ratings?.wtn?.doubles}
+          confidence={ratings?.wtn?.confidence}
+          lastUpdated={ratings?.wtn?.lastUpdated}
+          profileUrl={ratings?.wtn?.profileUrl}
+          monthlyChange={monthlyChange?.wtn}
+        />
+        <RatingCard
+          type="ntrp"
+          singles={ratings?.ntrp?.rating}
+          ratingType={ratings?.ntrp?.type}
+          lastUpdated={ratings?.ntrp?.lastUpdated}
+          expirationDate={ratings?.ntrp?.expirationDate}
+          profileUrl={ratings?.ntrp?.profileUrl}
+          monthlyChange={monthlyChange?.ntrp}
+        />
+      </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Current Progress */}
