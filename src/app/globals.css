@@ -48,153 +48,166 @@
  * ===========================================
  * GRAND SLAM TENNIS THEMES
  * ===========================================
- * Available tournaments (set data-slam on <html>):
- *   - "australian-open": True Blue & Light Blue (default)
- *   - "french-open": Red Clay / Roland Garros
- *   - "wimbledon": Grass Green & White
- *   - "us-open": US Open Blue & Green
+ * Four distinct color schemes inspired by Grand Slam tournaments.
+ * Each palette captures the tournament's court surface and branding.
+ *
+ * Available themes (set data-theme on <html>):
+ *   - "australian-open": AO Blue #0077C8 - Fresh & vibrant (default)
+ *   - "roland-garros": Clay #C84B31 - Warm & elegant
+ *   - "wimbledon": Green #006633 - Classic & refined
+ *   - "us-open": Blue #003087 - Bold & dynamic
+ *
+ * See: planning/TPv1_GrandSlam_ColorSystem.md for full specifications
  */
 
 :root,
-[data-slam="australian-open"] {
+[data-theme="australian-open"] {
   --radius: 0.625rem;
-  /* 🎾 AUSTRALIAN OPEN - True Blue #377DB8, Light Blue #E8F7FF */
-  --background: oklch(0.97 0.02 230);             /* Light blue tint */
-  --foreground: oklch(0.22 0.08 240);             /* Deep blue text */
-  --card: oklch(0.99 0.01 225);                   /* Crisp white-blue */
-  --card-foreground: oklch(0.22 0.08 240);
-  --popover: oklch(0.99 0.01 225);
-  --popover-foreground: oklch(0.22 0.08 240);
-  --primary: oklch(0.55 0.14 240);                /* True Blue */
+  /* AUSTRALIAN OPEN - "Happy Slam"
+   * Primary: AO Blue #0077C8 | Secondary: Teal #00A5A5
+   * Fresh, energetic, optimistic - Melbourne summer energy */
+  --background: oklch(0.975 0.015 230);           /* Ice #F5FAFD */
+  --foreground: oklch(0.18 0.04 240);             /* Navy #0A1929 */
+  --card: oklch(0.96 0.02 228);                   /* Frost #EBF4FA */
+  --card-foreground: oklch(0.18 0.04 240);
+  --popover: oklch(0.96 0.02 228);
+  --popover-foreground: oklch(0.18 0.04 240);
+  --primary: oklch(0.55 0.16 230);                /* AO Blue #0077C8 */
   --primary-foreground: oklch(0.98 0.01 230);
-  --secondary: oklch(0.92 0.04 235);              /* Soft blue */
-  --secondary-foreground: oklch(0.28 0.08 240);
-  --muted: oklch(0.94 0.03 232);
-  --muted-foreground: oklch(0.48 0.06 240);
-  --accent: oklch(0.70 0.12 220);                 /* Bright accent blue */
-  --accent-foreground: oklch(0.22 0.08 240);
-  --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.88 0.04 235);
-  --input: oklch(0.94 0.03 232);
-  --ring: oklch(0.55 0.14 240);
-  --chart-1: oklch(0.55 0.14 240);
-  --chart-2: oklch(0.65 0.12 220);
-  --chart-3: oklch(0.75 0.10 200);
-  --chart-4: oklch(0.50 0.10 255);
-  --chart-5: oklch(0.60 0.11 235);
-  --sidebar: oklch(0.95 0.025 232);
-  --sidebar-foreground: oklch(0.22 0.08 240);
-  --sidebar-primary: oklch(0.55 0.14 240);
+  --secondary: oklch(0.60 0.12 185);              /* Teal #00A5A5 */
+  --secondary-foreground: oklch(0.98 0.01 185);
+  --muted: oklch(0.94 0.02 228);
+  --muted-foreground: oklch(0.52 0.05 235);       /* Slate #5A7A9A */
+  --accent: oklch(0.65 0.10 185);                 /* Aqua #40C4C4 */
+  --accent-foreground: oklch(0.18 0.04 240);
+  --destructive: oklch(0.58 0.20 25);             /* Coral #E5533D */
+  --border: oklch(0.90 0.03 230);                 /* Cloud #D0E3F0 */
+  --input: oklch(0.94 0.02 228);
+  --ring: oklch(0.55 0.16 230);
+  --chart-1: oklch(0.55 0.16 230);
+  --chart-2: oklch(0.60 0.12 185);
+  --chart-3: oklch(0.65 0.10 200);
+  --chart-4: oklch(0.50 0.14 240);
+  --chart-5: oklch(0.58 0.11 220);
+  --sidebar: oklch(0.96 0.02 228);
+  --sidebar-foreground: oklch(0.18 0.04 240);
+  --sidebar-primary: oklch(0.55 0.16 230);
   --sidebar-primary-foreground: oklch(0.98 0.01 230);
-  --sidebar-accent: oklch(0.92 0.035 235);
-  --sidebar-accent-foreground: oklch(0.22 0.08 240);
-  --sidebar-border: oklch(0.88 0.04 235);
-  --sidebar-ring: oklch(0.55 0.14 240);
+  --sidebar-accent: oklch(0.93 0.025 228);
+  --sidebar-accent-foreground: oklch(0.18 0.04 240);
+  --sidebar-border: oklch(0.90 0.03 230);
+  --sidebar-ring: oklch(0.55 0.16 230);
 }
 
-/* 🎾 FRENCH OPEN - Red Clay #B24E3A (Roland Garros) */
-[data-slam="french-open"] {
-  --background: oklch(0.96 0.02 55);              /* Warm cream */
-  --foreground: oklch(0.25 0.08 35);              /* Deep terracotta text */
-  --card: oklch(0.98 0.015 50);                   /* Soft warm white */
-  --card-foreground: oklch(0.25 0.08 35);
-  --popover: oklch(0.98 0.015 50);
-  --popover-foreground: oklch(0.25 0.08 35);
-  --primary: oklch(0.52 0.16 35);                 /* Red Clay */
-  --primary-foreground: oklch(0.97 0.02 55);
-  --secondary: oklch(0.90 0.06 45);               /* Sandy beige */
-  --secondary-foreground: oklch(0.30 0.10 35);
-  --muted: oklch(0.92 0.04 50);
-  --muted-foreground: oklch(0.50 0.08 40);
-  --accent: oklch(0.65 0.14 55);                  /* Burnt orange accent */
-  --accent-foreground: oklch(0.25 0.08 35);
-  --destructive: oklch(0.50 0.20 25);
-  --border: oklch(0.85 0.05 50);
-  --input: oklch(0.92 0.04 50);
-  --ring: oklch(0.52 0.16 35);
-  --chart-1: oklch(0.52 0.16 35);
-  --chart-2: oklch(0.60 0.14 50);
-  --chart-3: oklch(0.68 0.12 65);
-  --chart-4: oklch(0.45 0.12 25);
-  --chart-5: oklch(0.58 0.10 40);
-  --sidebar: oklch(0.94 0.03 52);
-  --sidebar-foreground: oklch(0.25 0.08 35);
-  --sidebar-primary: oklch(0.52 0.16 35);
-  --sidebar-primary-foreground: oklch(0.97 0.02 55);
-  --sidebar-accent: oklch(0.90 0.05 48);
-  --sidebar-accent-foreground: oklch(0.25 0.08 35);
-  --sidebar-border: oklch(0.85 0.05 50);
-  --sidebar-ring: oklch(0.52 0.16 35);
+/* ROLAND GARROS - "Terre Battue"
+ * Primary: Clay #C84B31 | Secondary: Forest #2D5A27
+ * Warm, earthy, sophisticated - Parisian elegance */
+[data-theme="roland-garros"] {
+  --background: oklch(0.975 0.015 55);            /* Cream #FDF6F0 */
+  --foreground: oklch(0.22 0.06 35);              /* Espresso #2C1810 */
+  --card: oklch(0.97 0.018 52);                   /* Warm White #FAF3EB */
+  --card-foreground: oklch(0.22 0.06 35);
+  --popover: oklch(0.97 0.018 52);
+  --popover-foreground: oklch(0.22 0.06 35);
+  --primary: oklch(0.55 0.18 30);                 /* Clay #C84B31 */
+  --primary-foreground: oklch(0.975 0.015 55);
+  --secondary: oklch(0.42 0.12 145);              /* Forest #2D5A27 */
+  --secondary-foreground: oklch(0.97 0.02 145);
+  --muted: oklch(0.93 0.025 50);
+  --muted-foreground: oklch(0.55 0.06 45);        /* Taupe #8B7355 */
+  --accent: oklch(0.52 0.10 145);                 /* Sage #4A7C43 */
+  --accent-foreground: oklch(0.97 0.02 145);
+  --destructive: oklch(0.45 0.18 355);            /* Burgundy #9B2335 */
+  --border: oklch(0.90 0.03 50);                  /* Sand #E8DDD4 */
+  --input: oklch(0.93 0.025 50);
+  --ring: oklch(0.55 0.18 30);
+  --chart-1: oklch(0.55 0.18 30);
+  --chart-2: oklch(0.42 0.12 145);
+  --chart-3: oklch(0.65 0.14 55);
+  --chart-4: oklch(0.52 0.10 145);
+  --chart-5: oklch(0.60 0.10 40);
+  --sidebar: oklch(0.95 0.02 52);
+  --sidebar-foreground: oklch(0.22 0.06 35);
+  --sidebar-primary: oklch(0.55 0.18 30);
+  --sidebar-primary-foreground: oklch(0.975 0.015 55);
+  --sidebar-accent: oklch(0.92 0.025 50);
+  --sidebar-accent-foreground: oklch(0.22 0.06 35);
+  --sidebar-border: oklch(0.90 0.03 50);
+  --sidebar-ring: oklch(0.55 0.18 30);
 }
 
-/* 🎾 WIMBLEDON - Grass Green #6C8E48 & White */
-[data-slam="wimbledon"] {
-  --background: oklch(0.99 0.005 145);            /* Crisp white */
-  --foreground: oklch(0.25 0.08 145);             /* Deep green text */
-  --card: oklch(1 0 0);                           /* Pure white */
-  --card-foreground: oklch(0.25 0.08 145);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0.08 145);
-  --primary: oklch(0.55 0.12 135);                /* Grass Green */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.03 145);              /* Very light sage */
-  --secondary-foreground: oklch(0.30 0.08 145);
-  --muted: oklch(0.96 0.02 140);
-  --muted-foreground: oklch(0.50 0.06 145);
-  --accent: oklch(0.75 0.10 90);                  /* Championship gold */
-  --accent-foreground: oklch(0.25 0.08 145);
-  --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.90 0.03 145);
-  --input: oklch(0.96 0.02 140);
-  --ring: oklch(0.55 0.12 135);
-  --chart-1: oklch(0.55 0.12 135);
-  --chart-2: oklch(0.65 0.10 120);
-  --chart-3: oklch(0.75 0.10 90);
-  --chart-4: oklch(0.45 0.10 150);
-  --chart-5: oklch(0.60 0.08 130);
-  --sidebar: oklch(0.97 0.015 142);
-  --sidebar-foreground: oklch(0.25 0.08 145);
-  --sidebar-primary: oklch(0.55 0.12 135);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.94 0.025 145);
-  --sidebar-accent-foreground: oklch(0.25 0.08 145);
-  --sidebar-border: oklch(0.90 0.03 145);
-  --sidebar-ring: oklch(0.55 0.12 135);
+/* WIMBLEDON - "The Championships"
+ * Primary: Green #006633 | Secondary: Royal Purple #44104A
+ * Classic, prestigious, refined - British tradition */
+[data-theme="wimbledon"] {
+  --background: oklch(0.985 0.008 145);           /* Ivory #FAFDF7 */
+  --foreground: oklch(0.22 0.06 145);             /* Charcoal #1A2E1A */
+  --card: oklch(0.975 0.012 145);                 /* Cream #F5F9F2 */
+  --card-foreground: oklch(0.22 0.06 145);
+  --popover: oklch(0.975 0.012 145);
+  --popover-foreground: oklch(0.22 0.06 145);
+  --primary: oklch(0.42 0.14 150);                /* Wimbledon Green #006633 */
+  --primary-foreground: oklch(0.99 0.005 145);
+  --secondary: oklch(0.28 0.12 320);              /* Royal Purple #44104A */
+  --secondary-foreground: oklch(0.98 0.01 320);
+  --muted: oklch(0.96 0.015 145);
+  --muted-foreground: oklch(0.52 0.05 145);       /* Sage #5F7A5F */
+  --accent: oklch(0.38 0.10 320);                 /* Mauve #6B2D73 */
+  --accent-foreground: oklch(0.98 0.01 320);
+  --destructive: oklch(0.50 0.18 20);             /* Crimson #B22234 */
+  --border: oklch(0.91 0.025 145);                /* Mist #D4E5D8 */
+  --input: oklch(0.96 0.015 145);
+  --ring: oklch(0.42 0.14 150);
+  --chart-1: oklch(0.42 0.14 150);
+  --chart-2: oklch(0.28 0.12 320);
+  --chart-3: oklch(0.52 0.12 145);
+  --chart-4: oklch(0.38 0.10 320);
+  --chart-5: oklch(0.48 0.10 140);
+  --sidebar: oklch(0.97 0.01 145);
+  --sidebar-foreground: oklch(0.22 0.06 145);
+  --sidebar-primary: oklch(0.42 0.14 150);
+  --sidebar-primary-foreground: oklch(0.99 0.005 145);
+  --sidebar-accent: oklch(0.94 0.02 145);
+  --sidebar-accent-foreground: oklch(0.22 0.06 145);
+  --sidebar-border: oklch(0.91 0.025 145);
+  --sidebar-ring: oklch(0.42 0.14 150);
 }
 
-/* 🎾 US OPEN - Blue #3C638E & Green #6C935C */
-[data-slam="us-open"] {
-  --background: oklch(0.97 0.015 220);            /* Cool light blue-gray */
-  --foreground: oklch(0.22 0.06 230);             /* Deep blue text */
-  --card: oklch(0.99 0.01 210);
-  --card-foreground: oklch(0.22 0.06 230);
-  --popover: oklch(0.99 0.01 210);
-  --popover-foreground: oklch(0.22 0.06 230);
-  --primary: oklch(0.48 0.10 245);                /* US Open Blue */
-  --primary-foreground: oklch(0.98 0.01 220);
-  --secondary: oklch(0.58 0.10 140);              /* US Open Green */
-  --secondary-foreground: oklch(0.98 0.01 145);
-  --muted: oklch(0.93 0.025 200);
-  --muted-foreground: oklch(0.48 0.05 230);
-  --accent: oklch(0.58 0.10 140);                 /* Green accent */
-  --accent-foreground: oklch(0.98 0.01 145);
-  --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.88 0.03 215);
-  --input: oklch(0.93 0.025 210);
-  --ring: oklch(0.48 0.10 245);
-  --chart-1: oklch(0.48 0.10 245);
-  --chart-2: oklch(0.58 0.10 140);
-  --chart-3: oklch(0.55 0.08 200);
-  --chart-4: oklch(0.65 0.08 165);
-  --chart-5: oklch(0.52 0.09 225);
-  --sidebar: oklch(0.95 0.02 215);
-  --sidebar-foreground: oklch(0.22 0.06 230);
-  --sidebar-primary: oklch(0.48 0.10 245);
-  --sidebar-primary-foreground: oklch(0.98 0.01 220);
-  --sidebar-accent: oklch(0.92 0.025 210);
-  --sidebar-accent-foreground: oklch(0.22 0.06 230);
-  --sidebar-border: oklch(0.88 0.03 215);
-  --sidebar-ring: oklch(0.48 0.10 245);
+/* US OPEN - "America's Grand Slam"
+ * Primary: US Blue #003087 | Secondary: Championship Yellow #FFCD00
+ * Bold, dynamic, confident - New York energy */
+[data-theme="us-open"] {
+  --background: oklch(0.98 0.008 250);            /* Pearl #F8F9FC */
+  --foreground: oklch(0.15 0.03 260);             /* Midnight #0A0E1A */
+  --card: oklch(0.96 0.012 250);                  /* Silver #F0F2F7 */
+  --card-foreground: oklch(0.15 0.03 260);
+  --popover: oklch(0.96 0.012 250);
+  --popover-foreground: oklch(0.15 0.03 260);
+  --primary: oklch(0.35 0.14 260);                /* US Blue #003087 */
+  --primary-foreground: oklch(0.98 0.008 250);
+  --secondary: oklch(0.85 0.18 90);               /* Championship Yellow #FFCD00 */
+  --secondary-foreground: oklch(0.15 0.03 260);
+  --muted: oklch(0.94 0.015 250);
+  --muted-foreground: oklch(0.48 0.04 255);       /* Storm #5A6380 */
+  --accent: oklch(0.80 0.15 90);                  /* Gold #E5B800 */
+  --accent-foreground: oklch(0.15 0.03 260);
+  --destructive: oklch(0.52 0.20 25);             /* Red #D32F2F */
+  --border: oklch(0.88 0.02 250);                 /* Pewter #D1D5E0 */
+  --input: oklch(0.94 0.015 250);
+  --ring: oklch(0.35 0.14 260);
+  --chart-1: oklch(0.35 0.14 260);
+  --chart-2: oklch(0.85 0.18 90);
+  --chart-3: oklch(0.48 0.12 255);
+  --chart-4: oklch(0.45 0.12 160);
+  --chart-5: oklch(0.55 0.10 240);
+  --sidebar: oklch(0.96 0.01 250);
+  --sidebar-foreground: oklch(0.15 0.03 260);
+  --sidebar-primary: oklch(0.35 0.14 260);
+  --sidebar-primary-foreground: oklch(0.98 0.008 250);
+  --sidebar-accent: oklch(0.93 0.015 250);
+  --sidebar-accent-foreground: oklch(0.15 0.03 260);
+  --sidebar-border: oklch(0.88 0.02 250);
+  --sidebar-ring: oklch(0.35 0.14 260);
 }
 
 @layer base {

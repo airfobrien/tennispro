@@ -1,7 +1,7 @@
 # Session Summary: UI Look and Feel Updates
 **Date:** December 6, 2024
 **Branch:** `gen_ui_look_and_feel`
-**Status:** Changes pending commit
+**Status:** Committed
 
 ## What Was Accomplished
 
@@ -27,27 +27,34 @@ Changed the application brand from "TennisProPlus" to "TennisPro" across the ent
 - `e2e/home.spec.ts` - E2E test assertion
 - `CLAUDE.md` - Project overview description
 
-### 2. Grand Slam Tennis Theme System
-Replaced the traditional light/dark theme toggle with a Grand Slam tournament theme system. Users can now choose between four distinct color schemes based on tennis majors:
+### 2. Grand Slam Tennis Theme System (Professional Redesign)
+Replaced the traditional light/dark theme toggle with a Grand Slam tournament theme system. Each theme uses colors from the comprehensive design document (`planning/TPv1_GrandSlam_ColorSystem.md`).
 
-| Tournament | Primary Color | Description |
-|------------|---------------|-------------|
-| Australian Open | True Blue #377DB8 | Light blue tint background |
-| French Open | Red Clay #B24E3A | Warm cream/terracotta |
-| Wimbledon | Grass Green #6C8E48 | Crisp white with green accents |
-| US Open | Blue #3C638E | Cool blue-gray with green accent |
+| Tournament | Primary Color | Secondary Color | Description |
+|------------|---------------|-----------------|-------------|
+| Australian Open | AO Blue #0077C8 | Teal #00A5A5 | Fresh & vibrant |
+| Roland Garros | Clay #C84B31 | Forest #2D5A27 | Warm & elegant |
+| Wimbledon | Green #006633 | Purple #44104A | Classic & refined |
+| US Open | Blue #003087 | Yellow #FFCD00 | Bold & dynamic |
 
 **Implementation:**
-- Created `src/components/layout/slam-switcher.tsx` - New dropdown component for theme selection
-- Updated `src/app/globals.css` - Added all four tournament color themes using CSS custom properties
-- Updated `src/components/layout/header.tsx` - Replaced ThemeToggle with SlamSwitcher
-- Updated `src/components/layout/index.ts` - Added SlamSwitcher export
+- Created `src/components/layout/slam-switcher.tsx` - Professional dropdown with city-based labels
+- Updated `src/app/globals.css` - Complete color palettes for each tournament
+- Updated `src/components/layout/header.tsx` - Theme-aware logo and tennis ball nav indicator
+- Created `planning/TPv1_GrandSlam_ColorSystem.md` - Comprehensive design specification
+
+**Key Features:**
+- **Professional Theme Switcher**: City-based short names (Melbourne, Paris, London, New York)
+- **Theme-aware Logo**: Logo color changes with selected theme using `text-primary`
+- **Tennis Ball Navigation Indicator**: Complementary-colored tennis ball appears below active nav item
+- **useSyncExternalStore Pattern**: Modern React pattern for theme state management
+- **Migration Support**: Handles old localStorage key and theme ID transitions
 
 **How it works:**
-- Theme selection is stored in `localStorage` under `slam-theme` key
-- Themes are applied via `data-slam` attribute on the `<html>` element
+- Theme selection stored in `localStorage` under `tennispro-theme` key
+- Themes applied via `data-theme` attribute on the `<html>` element
 - Australian Open is the default theme
-- Full tournament name displayed on desktop, flag emoji on mobile
+- Uses `useSyncExternalStore` for reactive theme updates
 
 ### 3. Container Centering Fix
 Added custom container utility class in `globals.css` for proper centering of marketing pages with responsive max-widths.
@@ -58,75 +65,57 @@ Made the "TennisPro" title on auth pages (login/signup) a clickable link back to
 **File updated:**
 - `src/app/auth/layout.tsx` - Wrapped title in Link component with hover effect
 
-## Files Changed (Not Yet Committed)
+## Technical Details
+
+### Theme CSS Structure
+Themes use CSS custom properties (oklch color format) and are selected via `[data-theme="tournament-id"]` selectors:
+- `data-theme="australian-open"` (default)
+- `data-theme="roland-garros"`
+- `data-theme="wimbledon"`
+- `data-theme="us-open"`
+
+### SlamSwitcher Component
+```typescript
+const themes = [
+  { id: 'australian-open', name: 'Australian Open', shortName: 'Melbourne', color: '#0077C8' },
+  { id: 'roland-garros', name: 'Roland Garros', shortName: 'Paris', color: '#C84B31' },
+  { id: 'wimbledon', name: 'Wimbledon', shortName: 'London', color: '#006633' },
+  { id: 'us-open', name: 'US Open', shortName: 'New York', color: '#003087' },
+];
+```
+
+### TennisBall Component
+A CSS-based tennis ball with seam detail that uses the theme's secondary color for complementary visual harmony.
+
+### Header Features
+- Logo uses `text-primary` for theme-aware coloring
+- Tennis ball indicator positioned below active nav item (`-bottom-3`)
+- Smooth transitions on theme/nav changes
+
+## Files Changed
 
 ```
 Modified:
-- CLAUDE.md
-- e2e/home.spec.ts
-- public/manifest.json
-- src/app/(dashboard)/dashboard/progress/templates/page.tsx
-- src/app/(marketing)/about/page.tsx
-- src/app/(marketing)/contact/page.tsx
-- src/app/(marketing)/features/page.tsx
-- src/app/(marketing)/pricing/page.tsx
-- src/app/auth/layout.tsx
-- src/app/globals.css
-- src/app/layout.tsx
-- src/components/dashboard/sidebar.tsx
-- src/components/layout/footer.tsx
-- src/components/layout/header.tsx
-- src/components/layout/index.ts
-- src/components/marketing/cta.tsx
-- src/components/marketing/testimonials.tsx
-- src/components/student/navigation/student-sidebar.tsx
-- src/i18n/messages/en.json
-- src/i18n/messages/es.json
-- src/i18n/messages/fr.json
-- src/i18n/messages/pt.json
-- src/lib/seo/metadata.ts
+- src/app/globals.css - Complete theme color palettes
+- src/components/layout/header.tsx - Theme-aware logo + tennis ball indicator
+- src/components/layout/slam-switcher.tsx - Professional redesign with useSyncExternalStore
 
 New:
-- src/components/layout/slam-switcher.tsx
+- planning/TPv1_GrandSlam_ColorSystem.md - Complete design specification
 ```
 
 ## Next Steps
 
-### Immediate (Before Merging)
-1. **Review and test** all four tournament themes visually
-2. **Commit changes** to `gen_ui_look_and_feel` branch
-3. **Create PR** to merge into main branch
-
 ### Future UI Enhancements to Consider
-1. **Theme persistence across sessions** - Already implemented with localStorage
-2. **Dark mode variants** - Could add dark variants for each tournament theme
-3. **Theme-aware images/icons** - Logo and icons could adapt to selected theme
-4. **Animated theme transitions** - Smooth color transitions when switching themes
-5. **User preference sync** - Could sync theme to user account when logged in
-6. **Seasonal defaults** - Auto-select theme based on current Grand Slam season
-
-### Other Pending Work
-- Continue with remaining UI look and feel improvements
-- Marketing page content refinement
-- Dashboard UI polish
-
-## Technical Notes
-
-### Theme CSS Structure
-The themes use CSS custom properties (oklch color format) and are selected via `[data-slam="tournament-id"]` selectors on the `:root` element.
-
-### SlamSwitcher Component
-```typescript
-// Key properties for each slam
-const slams = [
-  { id: 'australian-open', name: 'Australian Open', emoji: '🇦🇺', color: 'bg-[#377DB8]' },
-  { id: 'french-open', name: 'French Open', emoji: '🇫🇷', color: 'bg-[#B24E3A]' },
-  { id: 'wimbledon', name: 'Wimbledon', emoji: '🇬🇧', color: 'bg-[#6C8E48]' },
-  { id: 'us-open', name: 'US Open', emoji: '🇺🇸', color: 'bg-[#3C638E]' },
-];
-```
+1. **Dark mode variants** - Could add dark variants for each tournament theme
+2. **Theme-aware images/icons** - Additional graphics could adapt to selected theme
+3. **Animated theme transitions** - Smooth color transitions when switching themes
+4. **User preference sync** - Could sync theme to user account when logged in
+5. **Seasonal defaults** - Auto-select theme based on current Grand Slam season
 
 ### Testing
 - Run `pnpm dev` to start local server
 - Navigate to any page and use the slam switcher in the header
 - Verify each theme applies correctly across all pages
+- Check tennis ball indicator appears below active nav item
+- Confirm logo color changes with theme selection
