@@ -120,17 +120,17 @@ const mockStudents: Student[] = [
 ];
 
 const skillLevelColors: Record<Student['skillLevel'], string> = {
-  beginner: 'bg-green-500/10 text-green-500',
-  intermediate: 'bg-blue-500/10 text-blue-500',
-  advanced: 'bg-purple-500/10 text-purple-500',
-  professional: 'bg-orange-500/10 text-orange-500',
+  beginner: 'bg-green-500/15 text-green-600 dark:text-green-400',
+  intermediate: 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
+  advanced: 'bg-purple-500/15 text-purple-600 dark:text-purple-400',
+  professional: 'bg-orange-500/15 text-orange-600 dark:text-orange-400',
 };
 
 const statusColors: Record<Student['status'], string> = {
-  active: 'bg-emerald-500/10 text-emerald-500',
-  inactive: 'bg-gray-500/10 text-gray-500',
-  invited: 'bg-yellow-500/10 text-yellow-500',
-  archived: 'bg-red-500/10 text-red-500',
+  active: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+  inactive: 'bg-gray-500/15 text-gray-600 dark:text-gray-400',
+  invited: 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400',
+  archived: 'bg-red-500/15 text-red-600 dark:text-red-400',
 };
 
 export default function StudentsPage() {

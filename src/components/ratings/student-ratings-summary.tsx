@@ -11,17 +11,17 @@ interface StudentRatingsSummaryProps {
 const RATING_STYLES = {
   utr: {
     label: 'UTR',
-    bgClass: 'bg-emerald-600 text-white',
+    textClass: 'text-emerald-600 dark:text-emerald-400',
     format: (v: number) => v.toFixed(2),
   },
   wtn: {
     label: 'WTN',
-    bgClass: 'bg-blue-600 text-white',
+    textClass: 'text-blue-600 dark:text-blue-400',
     format: (v: number) => v.toFixed(1),
   },
   ntrp: {
     label: 'NTRP',
-    bgClass: 'bg-orange-500 text-white',
+    textClass: 'text-orange-500 dark:text-orange-400',
     format: (v: number) => v.toFixed(1),
   },
 };
@@ -46,44 +46,20 @@ export function StudentRatingsSummary({ ratings, className }: StudentRatingsSumm
   }
 
   return (
-    <div className={cn('flex flex-wrap gap-1.5', className)}>
+    <div className={cn('flex flex-wrap gap-3 text-xs font-medium', className)}>
       {ratings.utr && (
-        <span
-          className={cn(
-            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium shadow-sm',
-            RATING_STYLES.utr.bgClass
-          )}
-        >
-          <span className="opacity-80">{RATING_STYLES.utr.label}</span>
-          <span className="font-semibold tabular-nums">
-            {RATING_STYLES.utr.format(ratings.utr.singles)}
-          </span>
+        <span className={cn('tabular-nums', RATING_STYLES.utr.textClass)}>
+          {RATING_STYLES.utr.label} {RATING_STYLES.utr.format(ratings.utr.singles)}
         </span>
       )}
       {ratings.wtn && (
-        <span
-          className={cn(
-            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium shadow-sm',
-            RATING_STYLES.wtn.bgClass
-          )}
-        >
-          <span className="opacity-80">{RATING_STYLES.wtn.label}</span>
-          <span className="font-semibold tabular-nums">
-            {RATING_STYLES.wtn.format(ratings.wtn.singles)}
-          </span>
+        <span className={cn('tabular-nums', RATING_STYLES.wtn.textClass)}>
+          {RATING_STYLES.wtn.label} {RATING_STYLES.wtn.format(ratings.wtn.singles)}
         </span>
       )}
       {ratings.ntrp && (
-        <span
-          className={cn(
-            'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium shadow-sm',
-            RATING_STYLES.ntrp.bgClass
-          )}
-        >
-          <span className="opacity-80">{RATING_STYLES.ntrp.label}</span>
-          <span className="font-semibold tabular-nums">
-            {RATING_STYLES.ntrp.format(ratings.ntrp.rating)}
-          </span>
+        <span className={cn('tabular-nums', RATING_STYLES.ntrp.textClass)}>
+          {RATING_STYLES.ntrp.label} {RATING_STYLES.ntrp.format(ratings.ntrp.rating)}
         </span>
       )}
     </div>

@@ -92,20 +92,23 @@ const recentStudents = [
 const upcomingLessons = [
   {
     id: '1',
-    student: 'Sarah Johnson',
+    studentId: '1',
+    student: 'Alex Thompson',
     type: 'Private',
     time: 'Today, 2:00 PM',
     duration: '1 hour',
   },
   {
     id: '2',
-    student: 'Mike Chen',
+    studentId: '2',
+    student: 'Jordan Williams',
     type: 'Private',
     time: 'Today, 4:00 PM',
     duration: '1 hour',
   },
   {
     id: '3',
+    studentId: null, // Group session - no single student
     student: 'Group Session',
     type: 'Group',
     time: 'Tomorrow, 10:00 AM',
@@ -196,7 +199,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Students</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" className="hover:bg-accent/15" asChild>
               <Link href="/dashboard/students">
                 View all
                 <ArrowUpRight className="ml-1 h-4 w-4" />
@@ -211,9 +214,10 @@ export default function DashboardPage() {
                   : null;
 
                 return (
-                  <div
+                  <Link
                     key={student.id}
-                    className="flex items-center justify-between"
+                    href={`/dashboard/students/${student.id}`}
+                    className="flex items-center justify-between rounded-lg p-2 -m-2 transition-colors hover:bg-accent/15"
                   >
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
@@ -239,7 +243,7 @@ export default function DashboardPage() {
                         <p className="text-xs text-muted-foreground">Progress</p>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -250,7 +254,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Upcoming Lessons</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" className="hover:bg-accent/15" asChild>
               <Link href="/dashboard/lessons">
                 View all
                 <ArrowUpRight className="ml-1 h-4 w-4" />
@@ -259,33 +263,49 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {upcomingLessons.map((lesson) => (
-                <div
-                  key={lesson.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-                      <Clock className="h-4 w-4 text-primary" />
+              {upcomingLessons.map((lesson) => {
+                const content = (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                        <Clock className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{lesson.student}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {lesson.time} · {lesson.duration}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">{lesson.student}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {lesson.time} · {lesson.duration}
-                      </p>
-                    </div>
-                  </div>
-                  <span
-                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium shadow-sm ${
-                      lesson.type === 'Private'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-purple-600 text-white'
-                    }`}
+                    <span
+                      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium shadow-sm ${
+                        lesson.type === 'Private'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-purple-600 text-white'
+                      }`}
+                    >
+                      {lesson.type}
+                    </span>
+                  </>
+                );
+
+                return lesson.studentId ? (
+                  <Link
+                    key={lesson.id}
+                    href={`/dashboard/students/${lesson.studentId}`}
+                    className="flex items-center justify-between rounded-lg p-2 -m-2 transition-colors hover:bg-accent/15"
                   >
-                    {lesson.type}
-                  </span>
-                </div>
-              ))}
+                    {content}
+                  </Link>
+                ) : (
+                  <div
+                    key={lesson.id}
+                    className="flex items-center justify-between p-2 -m-2"
+                  >
+                    {content}
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
