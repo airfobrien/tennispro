@@ -4,6 +4,7 @@ import { Filter, Plus, Search, Upload, MoreHorizontal, Mail, Archive, UserCheck 
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { StudentRatingsSummary } from '@/components/ratings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { getStudentRatings } from '@/lib/ratings';
 import { cn } from '@/lib/utils';
 
 
@@ -47,67 +49,73 @@ interface Student {
   totalLessons: number;
   totalVideos: number;
   joinedAt: string;
+  ratingStudentId?: string; // Links to ratings mock data
 }
 
 const mockStudents: Student[] = [
   {
     id: '1',
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    email: 'sarah.johnson@email.com',
+    firstName: 'Alex',
+    lastName: 'Thompson',
+    email: 'alex.t@email.com',
     skillLevel: 'intermediate',
     status: 'active',
     lastLesson: '2 days ago',
     totalLessons: 24,
     totalVideos: 15,
     joinedAt: '2024-06-15',
+    ratingStudentId: 'student-uuid-001', // Adult - UTR, WTN, NTRP
   },
   {
     id: '2',
-    firstName: 'Mike',
-    lastName: 'Chen',
-    email: 'mike.chen@email.com',
+    firstName: 'Jordan',
+    lastName: 'Williams',
+    email: 'jordan.w@email.com',
     skillLevel: 'advanced',
     status: 'active',
     lastLesson: '1 week ago',
     totalLessons: 48,
     totalVideos: 32,
     joinedAt: '2024-01-10',
+    ratingStudentId: 'student-uuid-002', // Junior (16) - UTR, WTN only
   },
   {
     id: '3',
+    firstName: 'Casey',
+    lastName: 'Martinez',
+    email: 'casey.m@email.com',
+    skillLevel: 'intermediate',
+    status: 'active',
+    lastLesson: 'Yesterday',
+    totalLessons: 36,
+    totalVideos: 18,
+    joinedAt: '2024-03-01',
+    ratingStudentId: 'student-uuid-003', // Senior (55) - NTRP only
+  },
+  {
+    id: '4',
+    firstName: 'Riley',
+    lastName: 'Johnson',
+    email: 'riley.j@email.com',
+    skillLevel: 'professional',
+    status: 'active',
+    lastLesson: '3 days ago',
+    totalLessons: 96,
+    totalVideos: 64,
+    joinedAt: '2023-03-15',
+    ratingStudentId: 'student-uuid-004', // College (20) - UTR, WTN, NTRP
+  },
+  {
+    id: '5',
     firstName: 'Emily',
     lastName: 'Davis',
     email: 'emily.davis@email.com',
     skillLevel: 'beginner',
-    status: 'active',
-    lastLesson: 'Yesterday',
-    totalLessons: 8,
-    totalVideos: 5,
-    joinedAt: '2024-09-01',
-  },
-  {
-    id: '4',
-    firstName: 'Alex',
-    lastName: 'Thompson',
-    email: 'alex.t@email.com',
-    skillLevel: 'intermediate',
     status: 'invited',
     totalLessons: 0,
     totalVideos: 0,
     joinedAt: '2024-10-20',
-  },
-  {
-    id: '5',
-    firstName: 'Jordan',
-    lastName: 'Williams',
-    email: 'jordan.w@email.com',
-    skillLevel: 'professional',
-    status: 'inactive',
-    lastLesson: '1 month ago',
-    totalLessons: 96,
-    totalVideos: 64,
-    joinedAt: '2023-03-15',
+    // No rating ID - new student without ratings
   },
 ];
 
@@ -251,6 +259,7 @@ export default function StudentsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Student</TableHead>
+                  <TableHead>Ratings</TableHead>
                   <TableHead>Skill Level</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Last Lesson</TableHead>
@@ -262,12 +271,17 @@ export default function StudentsPage() {
               <TableBody>
                 {filteredStudents.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center">
+                    <TableCell colSpan={8} className="h-24 text-center">
                       No students found.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredStudents.map((student) => (
+                  filteredStudents.map((student) => {
+                    const ratings = student.ratingStudentId
+                      ? getStudentRatings(student.ratingStudentId)
+                      : null;
+
+                    return (
                     <TableRow key={student.id}>
                       <TableCell>
                         <Link
@@ -290,6 +304,9 @@ export default function StudentsPage() {
                             </p>
                           </div>
                         </Link>
+                      </TableCell>
+                      <TableCell>
+                        <StudentRatingsSummary ratings={ratings} />
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -349,7 +366,8 @@ export default function StudentsPage() {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))
+                    );
+                  })
                 )}
               </TableBody>
             </Table>

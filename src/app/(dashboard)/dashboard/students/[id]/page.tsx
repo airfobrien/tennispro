@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, Edit, Mail, MoreHorizontal, TrendingUp, Video, Arc
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
+import { RatingsProgressChart, StudentRatingsSummary } from '@/components/ratings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,22 +20,138 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getStudentRatings } from '@/lib/ratings';
 
 
 
 // Mock data - replace with real data fetching
-const student = {
+// Mapping student IDs to rating student IDs (in real app this would be in the database)
+const studentRatingMapping: Record<string, string> = {
+  '1': 'student-uuid-001', // Alex Thompson
+  '2': 'student-uuid-002', // Jordan Williams
+  '3': 'student-uuid-003', // Casey Martinez
+  '4': 'student-uuid-004', // Riley Johnson
+};
+
+interface StudentData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  dateOfBirth: string;
+  skillLevel: 'beginner' | 'intermediate' | 'advanced' | 'professional';
+  playStyle: string;
+  handed: string;
+  backhand: string;
+  status: 'active' | 'inactive' | 'invited' | 'archived';
+  joinedAt: string;
+  goals: string;
+  stats: {
+    totalLessons: number;
+    totalVideos: number;
+    hoursCoached: number;
+    lastLesson: string;
+  };
+  recentVideos: { id: string; title: string; date: string; status: string }[];
+  upcomingLessons: { id: string; date: string; duration: string; focus: string }[];
+  progressionPath: {
+    name: string;
+    currentLevel: number;
+    totalLevels: number;
+    progress: number;
+    currentMilestone: string;
+  };
+}
+
+const studentDatabase: Record<string, StudentData> = {
+  '1': {
+    id: '1',
+    firstName: 'Alex',
+    lastName: 'Thompson',
+    email: 'alex.t@email.com',
+    phone: '+1 (555) 123-4567',
+    dateOfBirth: '1999-03-15',
+    skillLevel: 'intermediate' as const,
+    playStyle: 'Aggressive Baseliner',
+    handed: 'Right-handed',
+    backhand: 'Two-handed',
+    status: 'active' as const,
+    joinedAt: 'June 15, 2024',
+    goals: 'Improve serve consistency and develop net game. Preparing for league competition.',
+    stats: {
+      totalLessons: 24,
+      totalVideos: 15,
+      hoursCoached: 36,
+      lastLesson: '2 days ago',
+    },
+    recentVideos: [
+      { id: '1', title: 'Forehand practice', date: '2 days ago', status: 'analyzed' },
+      { id: '2', title: 'Serve technique', date: '1 week ago', status: 'analyzed' },
+      { id: '3', title: 'Match footage', date: '2 weeks ago', status: 'pending' },
+    ],
+    upcomingLessons: [
+      { id: '1', date: 'Tomorrow, 3:00 PM', duration: '1 hour', focus: 'Serve practice' },
+      { id: '2', date: 'Saturday, 10:00 AM', duration: '90 min', focus: 'Match play' },
+    ],
+    progressionPath: {
+      name: 'Intermediate Development',
+      currentLevel: 3,
+      totalLevels: 5,
+      progress: 65,
+      currentMilestone: 'Net Approach Mastery',
+    },
+  },
+  '2': {
+    id: '2',
+    firstName: 'Jordan',
+    lastName: 'Williams',
+    email: 'jordan.w@email.com',
+    phone: '+1 (555) 234-5678',
+    dateOfBirth: '2008-07-20',
+    skillLevel: 'advanced' as const,
+    playStyle: 'All-Court Player',
+    handed: 'Right-handed',
+    backhand: 'Two-handed',
+    status: 'active' as const,
+    joinedAt: 'January 10, 2024',
+    goals: 'Compete in junior nationals. Work on mental game and consistency under pressure.',
+    stats: {
+      totalLessons: 48,
+      totalVideos: 32,
+      hoursCoached: 72,
+      lastLesson: '1 week ago',
+    },
+    recentVideos: [
+      { id: '1', title: 'Tournament match', date: '1 week ago', status: 'analyzed' },
+      { id: '2', title: 'Backhand drill', date: '2 weeks ago', status: 'analyzed' },
+    ],
+    upcomingLessons: [
+      { id: '1', date: 'Wednesday, 4:00 PM', duration: '1.5 hours', focus: 'Tournament prep' },
+    ],
+    progressionPath: {
+      name: 'Junior Competitive',
+      currentLevel: 4,
+      totalLevels: 5,
+      progress: 78,
+      currentMilestone: 'Tournament Strategy',
+    },
+  },
+};
+
+// Default student for unknown IDs
+const baseStudent: StudentData = {
   id: '1',
   firstName: 'Sarah',
   lastName: 'Johnson',
   email: 'sarah.johnson@email.com',
   phone: '+1 (555) 123-4567',
   dateOfBirth: '2005-03-15',
-  skillLevel: 'intermediate' as const,
+  skillLevel: 'intermediate',
   playStyle: 'Aggressive Baseliner',
   handed: 'Right-handed',
   backhand: 'Two-handed',
-  status: 'active' as const,
+  status: 'active',
   joinedAt: 'June 15, 2024',
   goals: 'Improve serve consistency and develop net game. Preparing for high school varsity tryouts.',
   stats: {
@@ -70,7 +187,14 @@ const skillLevelColors = {
 
 export default function StudentProfilePage() {
   const params = useParams();
-  const studentId = params.id;
+  const studentId = params.id as string;
+
+  // Get student data from database (fallback to base student for unknown IDs)
+  const student = studentDatabase[studentId] || baseStudent;
+
+  // Get ratings for this student
+  const ratingStudentId = studentRatingMapping[studentId];
+  const ratings = ratingStudentId ? getStudentRatings(ratingStudentId) : null;
 
   return (
     <div className="space-y-6">
@@ -98,6 +222,9 @@ export default function StudentProfilePage() {
               </Badge>
             </div>
             <p className="text-muted-foreground">{student.email}</p>
+            <div className="mt-2">
+              <StudentRatingsSummary ratings={ratings} />
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -329,14 +456,37 @@ export default function StudentProfilePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="progress">
+        <TabsContent value="progress" className="space-y-4">
+          {/* Ratings Progress Chart */}
+          {ratings && (
+            <RatingsProgressChart
+              history={ratings.history}
+              currentRatings={{
+                utr: ratings.utr?.singles,
+                wtn: ratings.wtn?.singles,
+                ntrp: ratings.ntrp?.rating,
+              }}
+            />
+          )}
+
+          {/* Skill Progress */}
           <Card>
             <CardHeader>
-              <CardTitle>Progress Tracking</CardTitle>
-              <CardDescription>Detailed progress and milestones</CardDescription>
+              <CardTitle>Skill Progress</CardTitle>
+              <CardDescription>{student.progressionPath.name}</CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Progress tracking content coming soon...</p>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">
+                  Level {student.progressionPath.currentLevel} of {student.progressionPath.totalLevels}
+                </span>
+                <span className="text-sm font-medium">{student.progressionPath.progress}%</span>
+              </div>
+              <Progress value={student.progressionPath.progress} />
+              <div className="rounded-lg bg-muted p-3">
+                <p className="text-sm text-muted-foreground">Current Milestone</p>
+                <p className="font-medium">{student.progressionPath.currentMilestone}</p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

@@ -11,10 +11,12 @@ import {
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { StudentRatingsSummary } from '@/components/ratings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getStudentRatings } from '@/lib/ratings';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -56,31 +58,35 @@ const stats = [
 const recentStudents = [
   {
     id: '1',
-    name: 'Sarah Johnson',
+    name: 'Alex Thompson',
     avatar: null,
     lastLesson: '2 days ago',
     progress: 85,
+    ratingStudentId: 'student-uuid-001', // Adult - UTR, WTN, NTRP
   },
   {
     id: '2',
-    name: 'Mike Chen',
+    name: 'Jordan Williams',
     avatar: null,
     lastLesson: '3 days ago',
     progress: 72,
+    ratingStudentId: 'student-uuid-002', // Junior - UTR, WTN only
   },
   {
     id: '3',
-    name: 'Emma Williams',
+    name: 'Casey Martinez',
     avatar: null,
     lastLesson: '5 days ago',
     progress: 91,
+    ratingStudentId: 'student-uuid-003', // Senior - NTRP only
   },
   {
     id: '4',
-    name: 'John Smith',
+    name: 'Riley Johnson',
     avatar: null,
     lastLesson: '1 week ago',
     progress: 68,
+    ratingStudentId: 'student-uuid-004', // College - UTR, WTN, NTRP
   },
 ];
 
@@ -200,36 +206,43 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentStudents.map((student) => (
-                <div
-                  key={student.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={student.avatar ?? undefined} />
-                      <AvatarFallback>
-                        {student.name
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{student.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Last lesson: {student.lastLesson}
-                      </p>
+              {recentStudents.map((student) => {
+                const ratings = student.ratingStudentId
+                  ? getStudentRatings(student.ratingStudentId)
+                  : null;
+
+                return (
+                  <div
+                    key={student.id}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src={student.avatar ?? undefined} />
+                        <AvatarFallback>
+                          {student.name
+                            .split(' ')
+                            .map((n) => n[0])
+                            .join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{student.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Last lesson: {student.lastLesson}
+                        </p>
+                        <StudentRatingsSummary ratings={ratings} className="mt-1" />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <p className="text-sm font-medium">{student.progress}%</p>
+                        <p className="text-xs text-muted-foreground">Progress</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-right">
-                      <p className="text-sm font-medium">{student.progress}%</p>
-                      <p className="text-xs text-muted-foreground">Progress</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
