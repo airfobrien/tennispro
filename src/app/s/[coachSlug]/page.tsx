@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { use } from 'react';
 
 import { StudentLoginForm } from '@/components/auth/student-login-form';
 
@@ -26,8 +27,8 @@ export default function StudentLoginPage({ params }: StudentLoginPageProps) {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
 
-  // Use React.use() pattern for async params in Next.js 15+
-  const { coachSlug } = params as unknown as { coachSlug: string };
+  // Use React.use() to unwrap async params in Next.js 15+
+  const { coachSlug } = use(params);
 
   const coachData = mockCoachData[coachSlug];
 
