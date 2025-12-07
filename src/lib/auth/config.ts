@@ -9,9 +9,43 @@ const credentialsSchema = z.object({
   password: z.string().min(8),
 });
 
+// Mock coaches for development mode
+// Use these credentials when AUTH_DEV_MODE=true
+const mockCoaches = [
+  {
+    id: 'dev-coach-001',
+    email: 'coach@demo.com',
+    password: 'demo1234',
+    name: 'Demo Coach',
+    coachId: 'coach-uuid-001',
+    role: 'coach',
+    tier: 'professional',
+  },
+  {
+    id: 'dev-coach-002',
+    email: 'admin@demo.com',
+    password: 'admin1234',
+    name: 'Admin Coach',
+    coachId: 'coach-uuid-002',
+    role: 'admin',
+    tier: 'enterprise',
+  },
+  {
+    id: 'dev-coach-003',
+    email: 'starter@demo.com',
+    password: 'starter1234',
+    name: 'Starter Coach',
+    coachId: 'coach-uuid-003',
+    role: 'coach',
+    tier: 'starter',
+  },
+];
+
+const isDevMode = process.env.AUTH_DEV_MODE === 'true';
+
 export const authConfig: NextAuthConfig = {
   providers: [
-    // Cognito OAuth provider
+    // Cognito OAuth provider (production)
     Cognito({
       clientId: process.env.COGNITO_CLIENT_ID!,
       clientSecret: process.env.COGNITO_CLIENT_SECRET,
@@ -30,9 +64,32 @@ export const authConfig: NextAuthConfig = {
           return null;
         }
 
-        // For credentials auth, we'll use Cognito's InitiateAuth API
+        const { email, password } = parsed.data;
+
+        // Development mode: use mock coaches
+        if (isDevMode) {
+          const mockCoach = mockCoaches.find(
+            (c) => c.email === email && c.password === password
+          );
+
+          if (mockCoach) {
+            console.log(`[DEV MODE] Authenticated as: ${mockCoach.name}`);
+            return {
+              id: mockCoach.id,
+              email: mockCoach.email,
+              name: mockCoach.name,
+              coachId: mockCoach.coachId,
+              role: mockCoach.role,
+              tier: mockCoach.tier,
+            };
+          }
+
+          console.log(`[DEV MODE] Invalid credentials for: ${email}`);
+          return null;
+        }
+
+        // Production mode: use Cognito's InitiateAuth API
         // This will be implemented when we connect to AWS
-        // For now, return null to indicate auth should use OAuth flow
         console.log('Credentials auth attempted - implement Cognito InitiateAuth');
         return null;
       },
@@ -64,14 +121,17 @@ export const authConfig: NextAuthConfig = {
     },
     async jwt({ token, user, account }) {
       // Initial sign in
-      if (account && user) {
+      if (user) {
+        // Handle both OAuth (account) and Credentials (user only) flows
         return {
           ...token,
-          accessToken: account.access_token,
-          refreshToken: account.refresh_token,
-          accessTokenExpires: account.expires_at ? account.expires_at * 1000 : 0,
+          accessToken: account?.access_token ?? 'dev-token',
+          refreshToken: account?.refresh_token,
+          accessTokenExpires: account?.expires_at
+            ? account.expires_at * 1000
+            : Date.now() + 24 * 60 * 60 * 1000, // 24 hours for dev mode
           cognitoUserId: user.id,
-          // Custom claims from Cognito
+          // Custom claims - from user object (credentials) or Cognito
           coachId: (user as unknown as Record<string, unknown>).coachId as string | undefined,
           role: (user as unknown as Record<string, unknown>).role as string | undefined,
           tier: (user as unknown as Record<string, unknown>).tier as string | undefined,
