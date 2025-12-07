@@ -13,7 +13,6 @@ import Link from 'next/link';
 
 import { StudentRatingsSummary } from '@/components/ratings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getStudentRatings } from '@/lib/ratings';
@@ -276,9 +275,15 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                  <Badge variant={lesson.type === 'Private' ? 'default' : 'secondary'}>
+                  <span
+                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium shadow-sm ${
+                      lesson.type === 'Private'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-purple-600 text-white'
+                    }`}
+                  >
                     {lesson.type}
-                  </Badge>
+                  </span>
                 </div>
               ))}
             </div>
@@ -314,11 +319,15 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                  <Badge
-                    variant={video.status === 'analyzed' ? 'default' : 'secondary'}
+                  <span
+                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium shadow-sm ${
+                      video.status === 'analyzed'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-amber-500 text-white'
+                    }`}
                   >
                     {video.status === 'analyzed' ? 'Analyzed' : 'Processing'}
-                  </Badge>
+                  </span>
                 </div>
               ))}
             </div>
