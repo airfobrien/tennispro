@@ -80,7 +80,8 @@ export function error(
 export const errors = {
   unauthorized: () => error('UNAUTHORIZED', 'Authentication required', 401),
 
-  forbidden: () => error('FORBIDDEN', 'You do not have permission to access this resource', 403),
+  forbidden: (message: string = 'You do not have permission to access this resource') =>
+    error('FORBIDDEN', message, 403),
 
   notFound: (resource: string = 'Resource') =>
     error('NOT_FOUND', `${resource} not found`, 404),

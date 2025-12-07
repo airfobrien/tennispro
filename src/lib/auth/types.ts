@@ -21,6 +21,7 @@ declare module 'next-auth' {
       name?: string;
       image?: string;
       coachId?: string;
+      studentId?: string;
       role?: string;
       tier?: string;
     };
@@ -30,6 +31,7 @@ declare module 'next-auth' {
   interface User {
     id: string;
     coachId?: string;
+    studentId?: string;
     role?: string;
     tier?: string;
   }
@@ -42,6 +44,7 @@ declare module 'next-auth/jwt' {
     accessTokenExpires?: number;
     cognitoUserId?: string;
     coachId?: string;
+    studentId?: string;
     role?: string;
     tier?: string;
   }

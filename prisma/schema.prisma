@@ -37,6 +37,7 @@ model Coach {
   videos           Video[]
   analyses         Analysis[]
   lessons          Lesson[]
+  conversations    Conversation[]
 
   @@map("coaches")
 }
@@ -77,10 +78,12 @@ model Student {
   archivedAt DateTime? @map("archived_at")
 
   // Relations
-  progress StudentProgress[]
-  videos   Video[]
-  analyses Analysis[]
-  lessons  Lesson[]
+  progress      StudentProgress[]
+  videos        Video[]
+  analyses      Analysis[]
+  lessons       Lesson[]
+  goals         StudentGoal[]
+  conversations Conversation[]
 
   @@index([coachId])
   @@index([coachId, status])
@@ -203,6 +206,7 @@ model Milestone {
 
   // Relations
   progress StudentProgress[]
+  goals    StudentGoal[]
 
   @@unique([skillId, order])
   @@index([skillId])
@@ -394,4 +398,97 @@ model LessonVideo {
 
   @@id([lessonId, videoId])
   @@map("lesson_videos")
+}
+
+// ============================================
+// STUDENT GOALS
+// ============================================
+
+model StudentGoal {
+  id        String  @id @default(uuid())
+  studentId String  @map("student_id")
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  category    GoalCategory
+  targetDate  DateTime? @map("target_date")
+  status      GoalStatus @default(in_progress)
+  progress    Int        @default(0) // 0-100
+
+  coachNotes        String?    @map("coach_notes")
+  linkedMilestoneId String?    @map("linked_milestone_id")
+  linkedMilestone   Milestone? @relation(fields: [linkedMilestoneId], references: [id])
+  coachVisible      Boolean    @default(true) @map("coach_visible")
+
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  achievedAt DateTime? @map("achieved_at")
+
+  @@index([studentId])
+  @@index([studentId, status])
+  @@map("student_goals")
+}
+
+enum GoalCategory {
+  skill_improvement
+  competition
+  rating
+  fitness
+  custom
+}
+
+enum GoalStatus {
+  in_progress
+  achieved
+  paused
+  abandoned
+}
+
+// ============================================
+// MESSAGING
+// ============================================
+
+model Conversation {
+  id        String  @id @default(uuid())
+  coachId   String  @map("coach_id")
+  coach     Coach   @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  studentId String  @map("student_id")
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  lastMessageAt DateTime? @map("last_message_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  messages Message[]
+
+  @@unique([coachId, studentId])
+  @@index([coachId])
+  @@index([studentId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String       @map("conversation_id")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId   String     @map("sender_id")
+  senderType SenderType @map("sender_type")
+
+  content     String
+  attachments Json? // Array of attachment objects
+
+  readAt DateTime? @map("read_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([conversationId])
+  @@index([conversationId, createdAt])
+  @@map("messages")
+}
+
+enum SenderType {
+  coach
+  student
 }

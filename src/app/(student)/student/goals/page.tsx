@@ -1,6 +1,7 @@
 'use client';
 
-import { Calendar, CheckCircle2, Plus, Target } from 'lucide-react';
+import { Calendar, CheckCircle2, ChevronRight, Plus, Target } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -77,9 +78,11 @@ export default function StudentGoalsPage() {
             Track your personal tennis goals
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Goal
+        <Button asChild>
+          <Link href="/student/goals/new">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Goal
+          </Link>
         </Button>
       </div>
 
@@ -144,57 +147,62 @@ export default function StudentGoalsPage() {
         ) : (
           <div className="space-y-4">
             {filteredGoals.map((goal) => (
-              <Card key={goal.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={cn(
-                          'mt-0.5 flex h-8 w-8 items-center justify-center rounded-full',
-                          goal.status === 'completed'
-                            ? 'bg-green-500/10'
-                            : 'bg-primary/10'
-                        )}
-                      >
-                        {goal.status === 'completed' ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <Target className="h-5 w-5 text-primary" />
-                        )}
+              <Link key={goal.id} href={`/student/goals/${goal.id}`}>
+                <Card className="transition-colors hover:border-primary/50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={cn(
+                            'mt-0.5 flex h-8 w-8 items-center justify-center rounded-full',
+                            goal.status === 'completed'
+                              ? 'bg-green-500/10'
+                              : 'bg-primary/10'
+                          )}
+                        >
+                          {goal.status === 'completed' ? (
+                            <CheckCircle2 className="h-5 w-5 text-green-500" />
+                          ) : (
+                            <Target className="h-5 w-5 text-primary" />
+                          )}
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">{goal.title}</CardTitle>
+                          <CardDescription>{goal.description}</CardDescription>
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle className="text-base">{goal.title}</CardTitle>
-                        <CardDescription>{goal.description}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={cn('text-xs', statusColors[goal.status])}>
-                      {goal.status === 'completed' ? 'Completed' : 'In Progress'}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="font-medium">{goal.progress}%</span>
-                      </div>
-                      <Progress value={goal.progress} className="h-2" />
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        <span>Due {goal.deadline}</span>
-                      </div>
-                      {goal.coachVisible && (
-                        <Badge variant="outline" className="text-xs">
-                          Visible to Coach
+                      <div className="flex items-center gap-2">
+                        <Badge className={cn('text-xs', statusColors[goal.status])}>
+                          {goal.status === 'completed' ? 'Completed' : 'In Progress'}
                         </Badge>
-                      )}
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Progress</span>
+                          <span className="font-medium">{goal.progress}%</span>
+                        </div>
+                        <Progress value={goal.progress} className="h-2" />
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          <span>Due {goal.deadline}</span>
+                        </div>
+                        {goal.coachVisible && (
+                          <Badge variant="outline" className="text-xs">
+                            Visible to Coach
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
