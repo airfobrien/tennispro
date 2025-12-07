@@ -30,6 +30,7 @@ const publicPaths = [
   '/auth/signup',
   '/auth/error',
   '/studio',
+  '/s', // Student login pages (e.g., /s/demo-coach)
 ];
 
 // Check if path is public
